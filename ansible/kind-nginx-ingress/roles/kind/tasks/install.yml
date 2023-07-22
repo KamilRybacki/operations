@@ -1,0 +1,32 @@
+---
+- name: "Check if Kind is installed"
+  ansible.builtin.command: "kind --version"
+  register: kind_version
+  changed_when: false
+  failed_when: false
+
+- name: "Install Kind if not installed"
+  block:
+    - name: "Check host architecture"
+      ansible.builtin.command: "uname -m"
+      register: host_arch
+      changed_when: false
+      failed_when: false
+    - name: "Choose AMD URL for Kind"
+      set_fact:
+        kind_url: "{{ _kind_x86_64_url }}" 
+      when: host_arch.stdout == "x86_64"
+    - name: "Choose ARM URL for Kind"
+      set_fact:
+        kind_url: "{{ _kind_arm64_url }}" 
+      when: host_arch.stdout == "aarch64"
+    - name: "Download Kind from URL"
+      ansible.builtin.get_url:
+        url: "{{ kind_url }}"
+        dest: "/usr/local/bin/kind"
+        mode: "u=rwx,g=rx,o=rx"
+        validate_certs: false
+      register: kind_download
+      changed_when: kind_download is changed
+      failed_when: kind_download is failed
+  when: kind_version.rc != 0

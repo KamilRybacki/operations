@@ -1,0 +1,5 @@
+dev:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: /home/kamil/.pyenv/shims/python3

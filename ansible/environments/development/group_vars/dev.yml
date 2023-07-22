@@ -1,0 +1,5 @@
+manifests_and_configs_path: "/tmp"
+kubeconfig_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/.kube/config"
+
+kind_cluster_name: "local-dev"
+kind_cluster_config_file: "{{ manifests_and_configs_path }}/kind-cluster.yml"
