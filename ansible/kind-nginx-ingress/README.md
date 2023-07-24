@@ -8,6 +8,8 @@ To install Kind (if not present) and NGINX ingress controller on aa new, local c
 ansible-playbook -i ../environments/<environment> install.yml
 ```
 
+To change the group of target hosts, edit the `apply.yml` file accordingly. The default group of target hosta is set to `hosts: "all" `
+
 ## Requirements
 
 For Ansible:
