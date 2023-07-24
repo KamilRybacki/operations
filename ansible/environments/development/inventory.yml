@@ -1,4 +1,4 @@
-dev:
+home:
   hosts:
     localhost:
       ansible_connection: local

@@ -13,11 +13,11 @@
     - name: "Create Cluster config from template"
       ansible.builtin.template:
         src: "cluster.yml.j2"
-        dest: "{{ kind_cluster_config_file }}"
+        dest: "{{ _kind_nginx_ingress_cluster_config_file }}"
         mode: "u=rw,g=r,o=r"
 
     - name: "Create Kind Cluster"
-      ansible.builtin.command: "kind create cluster --config={{ kind_cluster_config_file }} --kubeconfig={{ kubeconfig_path }}"
+      ansible.builtin.command: "kind create cluster --config={{ _kind_nginx_ingress_cluster_config_file }} --kubeconfig={{ kubeconfig_path }}"
       register: kind_cluster_create
       changed_when: kind_cluster_create is changed
       failed_when: kind_cluster_create is failed
