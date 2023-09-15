@@ -1,3 +1,0 @@
-_kind_nginx_ingress_cluster_config_file: "{{ manifests_and_configs_path }}/kind-cluster.yml"
-
-_ingress_cluster_nginx_ingress_manifest_url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml"

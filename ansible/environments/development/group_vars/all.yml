@@ -14,3 +14,4 @@ kind_nginx_ingress_cluster_extra_nodes:
       - containerPort: 8080
         hostPort: 8080
 
+k8s_prometheus_target_cluster_name: "{{ kind_nginx_ingress_cluster_name }}"
