@@ -1,0 +1,7 @@
+---
+- name: "Remove {{ kind_nginx_ingress_cluster_name }} Kind cluster"
+  hosts: "all"
+  connection: "local"
+  any_errors_fatal: true
+  tasks:
+    - ansible.builtin.include_role: { name: "ingress-cluster", tasks_from: "uninstall" }

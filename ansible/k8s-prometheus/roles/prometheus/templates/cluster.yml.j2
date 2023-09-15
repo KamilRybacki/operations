@@ -22,18 +22,7 @@ nodes:
 
 {% for node in kind_nginx_ingress_cluster_extra_nodes %}
 
-{% set nodes = 1 %}
-{% if node.amount is defined %}
-{% set nodes = node.amount %}
-{% endif %}
-{% if node.extraMounts is defined %}
-{% set nodes = 1 %}
-{% endif %}
-{% if node.extraPortMappings is defined %}
-{% set nodes = 1 %}
-{% endif %}
-
-{% for index in range(nodes) %}
+{% for index in range(node.amount) %}
   
   - role: "{{ node.role }}"
 
@@ -47,7 +36,7 @@ nodes:
       hostPath: "{{ mount.hostPath }}"
       readOnly: {{ mount.readOnly | default(false) }}
       selinuxRelabel: {{ mount.selinuxRelabel | default(false) }}
-      propagation: "{{ mount.propagation | default(None) }}"
+      propagation: "{{ mount.propagation | defaults(None) }}"
     
     {% endfor %}
 

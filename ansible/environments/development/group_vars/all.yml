@@ -5,5 +5,12 @@ kind_nginx_ingress_cluster_name: "local-dev"
 kind_nginx_ingress_cluster_extra_nodes:
   - role: worker
     memory: "1Gi"
-    cpu: "1"
-    amount: 4
+    cpu: 1
+    extraMounts: []
+    extraLabels:
+       - name: node
+         value: worker
+    extraPortMappings:
+      - containerPort: 8080
+        hostPort: 8080
+

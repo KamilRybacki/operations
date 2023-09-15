@@ -1,0 +1,12 @@
+
+- name: "Check if Kind Cluster is present"
+  ansible.builtin.command: "kind get clusters"
+  register: kind_nginx_ingress_cluster_list
+  changed_when: false
+  failed_when: false
+
+- debug:
+    msg: "Kind Cluster List: {{ kind_nginx_ingress_cluster_list.stdout }}"
+
+- name: "Create Kind Cluster"
+  ansible.builtin.command: "kind delete clusters --kubeconfig={{ kubeconfig_path }} {{ kind_nginx_ingress_cluster_name }}"
