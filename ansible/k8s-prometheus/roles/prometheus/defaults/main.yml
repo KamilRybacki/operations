@@ -1,5 +1,8 @@
-k8s_prometheus_operator_create_default_rules: false
-k8s_prometheus_operator_default_rules:
+k8s_prometheus_operator_name: "prometheus-operator"
+k8s_prometheus_operator_namespace: "monitoring"
+
+
+k8s_prometheus_operator_default_alert_rules:
   - name: "alertmanager"
     labels: {}
     annotations: {}
@@ -81,6 +84,52 @@ k8s_prometheus_operator_default_rules:
   - name: "windows"
     labels: {}
     annotations: {}
-k8s_prometheus_operator_default_rules_namespaces_target: ".*"
-k8s_prometheus_operator_default_rules_runbook_url: "https://runbooks.prometheus-operator.dev/runbooks"
+k8s_prometheus_operator_default_alert_rules_namespaces_target: ".*"
+k8s_prometheus_operator_default_alert_rules_runbook_url: "https://runbooks.prometheus-operator.dev/runbooks"
+k8s_prometheus_operator_disabled_alert_rules: []
+k8s_prometheus_operator_custom_record_or_alert_rules: []
 
+
+k8s_prometheus_operator_image_registry: ""
+k8s_prometheus_operator_image_pull_secrets: []
+
+
+k8s_prometheus_operator_create_rbac: true
+
+
+k8s_prometheus_operator_alertmanager_enabled: false
+k8s_prometheus_operator_alertmanager_annotations: {}
+k8s_prometheus_operator_alertmanager_api_version: "v2"
+
+k8s_prometheus_operator_alertmanager_create_service_account: true
+k8s_prometheus_operator_alertmanager_service_account_name: "{{ k8s_prometheus_operator_name }}-alertmanager-sa"
+k8s_prometheus_operator_alertmanager_service_account_annotations: {}
+k8s_prometheus_operator_alertmanager_service_account_automount_token: true
+
+k8s_prometheus_operator_alertmanager_pod_disruption_budget_enabled: true
+k8s_prometheus_operator_alertmanager_pod_disruption_budget_min_available: 1
+k8s_prometheus_operator_alertmanager_pod_disruption_budget_max_unavailable: ""
+
+k8s_prometheus_operator_alertmanager_resolve_timeout: 5m
+k8s_prometheus_operator_alertmanager_inhibit_rules:
+  - matchers:
+      source: 
+        - 'severity == critical'
+      target:
+        - 'severity =~ warning|info'
+    equal:
+      - 'namespace'
+      - 'alertname'
+  - matchers:
+      source: 
+        - 'severity == warning'
+      target: 'severity == info'
+    equal:
+      - 'namespace'
+      - 'alertname'
+  - matchers:
+      source: 'alertname == InfoInhibitor'
+      target: 'severity == info'
+    equal:
+      - 'namespace'
+k8s_prometheus_operator_alertmanager_receivers: []

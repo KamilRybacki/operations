@@ -7,9 +7,9 @@ fullnameOverride: "{{ k8s_prometheus_operator_name }}"
 
 commonLabels: {}
 
-{% for extra_label in k8s_prometheus_operator_resource_extra_labels %}
-  
-  {{ label.name }}: {{ label.value }}
+{% for label_name, label_value in k8s_prometheus_operator_resource_extra_labels.items() %}
+
+  {{ label_name }}: "{{ label_value }}"
 
 {% endfor %}
 
@@ -18,44 +18,37 @@ commonLabels: {}
 crds:
   enabled: {{ _k8s_prometheus_operator_enable_crds }}
 
-{% if k8s_prometheus_operator_create_default_rules %}
+{% if k8s_prometheus_operator_default_alert_rules | length > 0%}
 
 defaultRules:
-  create: true 
+  create: true
   rules:
 
-  {% for rule in k8s_prometheus_operator_default_rules %}
-  
+  {% for rule in k8s_prometheus_operator_default_alert_rules %}
+
     {{ rule.name }}: true
-  
+
   {% endfor %}
 
-  ## Reduce app namespace alert scope
-  appNamespacesTarget: "{{ k8s_prometheus_operator_default_rules_namespaces_target }}"
+  appNamespacesTarget: "{{ k8s_prometheus_operator_default_alert_rules_namespaces_target }}"
 
   ## Labels for default rules
   labels: {}
   ## Annotations for default rules
   annotations: {}
-
-  ## Additional labels for PrometheusRule alerts
-  additionalRuleLabels: {}
-
-  ## Additional annotations for PrometheusRule alerts
-  additionalRuleAnnotations: {}
-
   ## Additional labels for specific PrometheusRule alert groups
-  additionalRuleGroupLabels:
+  additionalRuleGroupLabels: {}
 
-  {% for rule in k8s_prometheus_operator_default_rules %}
+  additionalRuleLabels:
+  {% for rule in k8s_prometheus_operator_default_alert_rules %}
 
     {{ rule.name }}:
-    
+
     {% if rule.labels | length > 0 %}
 
-    {% for rule_label in rule.labels %}
+    {% for label_name, label_value in rule.labels.items() %}
 
-    {{ rule_label.name }}: {{ rule_label.value }}
+    {{ label_name }}: "{{ label_value }}"
 
     {% endfor %}
 
@@ -64,18 +57,19 @@ defaultRules:
     {{ rule.name }}: {}
 
     {% endif %}
-  
+
   {% endfor %}
 
-  {% for rule in k8s_prometheus_operator_default_rules %}
+  additionalRuleAnnotations:
+  {% for rule in k8s_prometheus_operator_default_alert_rules %}
 
     {{ rule.name }}:
-    
+
     {% if rule.annotations | length > 0 %}
 
-    {% for rule_annotation in rule.annotations %}
+    {% for annotation_name, annotation_value in rule.annotations.items() %}
 
-    {{ rule_annotation.name }}: {{ rule_annotation.value }}
+    {{ annotation_name }}: {{ annotation_value }}
 
     {% endfor %}
 
@@ -84,7 +78,7 @@ defaultRules:
     {{ rule.name }}: {}
 
     {% endif %}
-  
+
   {% endfor %}
 
 {% else %}
@@ -94,125 +88,220 @@ defaultRules:
 
 {% endif %}
 
-  ## Prefix for runbook URLs. Use this to override the first part of the runbookURLs that is common to all rules.
-  runbookUrl: 
+  runbookUrl: "{{ k8s_prometheus_operator_create_default_rules_runbook_url }}"
 
-  ## Disabled PrometheusRule alerts
+  {% if k8s_prometheus_operator_disabled_alert_rules | length > 0 %}
+
+  disabled:
+
+  {% for rule in k8s_prometheus_operator_disabled_alert_rules %}
+
+    {{ rule.name }}: true
+
+  {% endfor %}
+
+  {% else %}
+
   disabled: {}
-  # KubeAPIDown: true
-  # NodeRAIDDegraded: true
+
+  {% endif %}
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-additionalPrometheusRulesMap: {}
-#  rule-name:
-#    groups:
-#    - name: my_group
-#      rules:
-#      - record: my_record
-#        expr: 100 * my_record
 
-##
+{% if k8s_prometheus_operator_custom_record_or_alert_rules | length > 0 %}
+
+additionalPrometheusRulesMap:
+
+{% for rule in k8s_prometheus_operator_custom_record_or_alert_rules %}
+
+  {{ rule.name }}:
+
+  groups:
+
+  {% for group in rule.groups %}
+
+    - name: {{ group.name }}
+      rules:
+
+      {% for group_rule in group.rules %}
+
+        - record: {{ group_rule.record }}
+          expr: {{ group_rule.expr }}
+
+      {% endfor %}
+
+  {% endfor %}
+
+{% endfor %}
+
+{% else %}
+
+additionalPrometheusRulesMap: {}
+
+{% endif %}
+
 global:
   rbac:
-    create: true
+    create: "{{ k8s_prometheus_operator_create_rbac }}"
 
-    ## Create ClusterRoles that extend the existing view, edit and admin ClusterRoles to interact with prometheus-operator CRDs
-    ## Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles
-    createAggregateClusterRoles: false
-    pspEnabled: false
+    createAggregateClusterRoles: {{ _k8s_prometheus_operator_aggregate_cluster_roles }}
+    pspEnabled: {{ _k8s_prometheus_operator_enable_psp }}
+
+    {% if _k8s_prometheus_operator_enable_psp %}
+
+    pspAnnotations:
+
+    {% for annotation_name, annotation_value in _k8s_prometheus_operator_psp_annotation.items() %}
+
+      {{ annotation_name }}: "{{ annotation_value }}"
+
+    {% endfor %}
+
+    {% else %}
+
     pspAnnotations: {}
-      ## Specify pod annotations
-      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
-      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
-      ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
-      ##
-      # seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
-      # seccomp.security.alpha.kubernetes.io/defaultProfileName: 'docker/default'
-      # apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
 
-  ## Global image registry to use if it needs to be overriden for some specific use cases (e.g local registries, custom images, ...)
-  ##
-  imageRegistry: ""
+    {% endif %}
 
-  ## Reference to one or more secrets to be used when pulling images
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
+  imageRegistry: "{{ k8s_prometheus_operator_image_registry }}"
+
+  {% if k8s_prometheus_operator_image_registry | length > 0 %}
+
+  imagePullSecrets:
+
+  {% for secret in k8s_prometheus_operator_image_pull_secrets %}
+
+    - name: {{ secret }}
+
+  {% endfor %}
+
+  {% else %}
+
   imagePullSecrets: []
-  # - name: "image-pull-secret"
-  # or
-  # - "image-pull-secret"
+
+  {% endif %}
 
 windowsMonitoring:
-  ## Deploys the windows-exporter and Windows-specific dashboards and rules
-  enabled: false
-  ## Job must match jobLabel in the PodMonitor/ServiceMonitor and is used for the rules
-  job: prometheus-windows-exporter
+  enabled: {{ _k8s_prometheus_operator_windows_monitoring_enabled }}
+  job: "{{ _k8s_prometheus_operator_windows_monitoring_job }}"
 
-## Configuration for alertmanager
-## ref: https://prometheus.io/docs/alerting/alertmanager/
-##
 alertmanager:
+  enabled: {{ k8s_prometheus_operator_alertmanager_enabled }}
 
-  ## Deploy alertmanager
-  ##
-  enabled: true
+  {% if k8s_prometheus_operator_alertmanager_annotations | length > 0 %}
 
-  ## Annotations for Alertmanager
-  ##
+  annotations:
+
+  {% for annotation_name, annotation_key in k8s_prometheus_operator_alertmanager_annotations.items() %}
+
+    {{ annotation_name }}: "{{ annotation_value }}"
+
+  {% endfor %}
+
+  {% else %}
+
   annotations: {}
 
-  ## Api that prometheus will use to communicate with alertmanager. Possible values are v1, v2
-  ##
-  apiVersion: v2
+  {% endif %}
 
-  ## Service account for Alertmanager to use.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-  ##
+  apiVersion: "{{ k8s_prometheus_operator_alertmanager_api_version }}"
+
   serviceAccount:
-    create: true
-    name: ""
+    create: {{ k8s_prometheus_operator_alertmanager_create_service_account }}
+    name: "{{ k8s_prometheus_operator_alertmanager_service_account_name }}"
+
+    {% if k8s_prometheus_operator_alertmanager_service_account_annotations | length > 0 %}
+
+    annotations:
+
+    {% for annotation_key, annotation_value in k8s_prometheus_operator_alertmanager_service_account_annotations.items() %}
+
+      {{ annotation_key }}: "{{ annotation_value }}"
+
+    {% endfor %}
+
+    {% else %}
+
     annotations: {}
-    automountServiceAccountToken: true
 
-  ## Configure pod disruption budgets for Alertmanager
-  ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
-  ## This configuration is immutable once created and will require the PDB to be deleted to be changed
-  ## https://github.com/kubernetes/kubernetes/issues/45398
-  ##
+    {% endif %}
+
+    automountServiceAccountToken: {{ k8s_prometheus_operator_alertmanager_service_account_automount_token }}
+
   podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
-    maxUnavailable: ""
+    enabled: {{ k8s_prometheus_operator_alertmanager_pod_disruption_budget_enabled }}
+    minAvailable: {{ k8s_prometheus_operator_alertmanager_pod_disruption_budget_min_available }}
+    maxUnavailable: {{ k8s_prometheus_operator_alertmanager_pod_disruption_budget_max_unavailable }}
 
-  ## Alertmanager configuration directives
-  ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
-  ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
-  ##
   config:
     global:
-      resolve_timeout: 5m
+      resolve_timeout: "{{ k8s_prometheus_operator_alertmanager_resolve_timeout }}"
+
+    {% if k8s_prometheus_operator_alertmanager_inhibit_rules | length > 0 %}
+
     inhibit_rules:
+
+    {% for rule in k8s_prometheus_operator_alertmanager_inhibit_rules %}
+
       - source_matchers:
-          - 'severity = critical'
+        {% for matcher in rule.matchers.source %}
+
+          - "{{ matcher }}"
+
+        {% endfor %}
+
         target_matchers:
-          - 'severity =~ warning|info'
+        {% for matcher in rule.matchers.target %}
+
+          - "{{ matcher }}"
+
+        {% endfor %}
+
         equal:
-          - 'namespace'
-          - 'alertname'
-      - source_matchers:
-          - 'severity = warning'
-        target_matchers:
-          - 'severity = info'
-        equal:
-          - 'namespace'
-          - 'alertname'
-      - source_matchers:
-          - 'alertname = InfoInhibitor'
-        target_matchers:
-          - 'severity = info'
-        equal:
-          - 'namespace'
+        {% for equal in rule.equal %}
+
+          - "{{ equal }}"
+
+        {% endfor %}
+
+    {% endfor %}
+
+    {% else %}
+
+    inhibit_rules: []
+
+    {% endif %}
+
+    {% if k8s_prometheus_operator_alertmanager_receivers | length > 0 %}
+
+    receivers:
+
+    {% for receiver in k8s_prometheus_operator_alertmanager_receivers %}
+
+    - name: "{{ receiver.name }}"
+
+    {% for name, config in receiver.configs.items() %}
+
+    {{ name }}:
+      
+      {% for setting_name, setting_value in config.items() %}
+
+      - {{ setting_name }}: "{{ setting_value }}"
+
+      {% endfor %}
+
+    {% endfor %}
+
+    {% endfor %}
+
+    {% else %}
+
+    receivers:
+      - name: "null"
+
+    {% endif %}
+
     route:
       group_by: ['namespace']
       group_wait: 30s
@@ -223,8 +312,6 @@ alertmanager:
       - receiver: 'null'
         matchers:
           - alertname =~ "InfoInhibitor|Watchdog"
-    receivers:
-    - name: 'null'
     templates:
     - '/etc/alertmanager/config/*.tmpl'
 

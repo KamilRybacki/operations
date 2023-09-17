@@ -1,0 +1,5 @@
+_k8s_prometheus_operator_aggregate_cluster_roles: false
+_k8s_prometheus_operator_disable_psp: false
+_k8s_prometheus_operator_psp_annotations: []
+_k8s_prometheus_operator_windows_monitoring_enabled: false
+_k8s_prometheus_operator_windows_monitoring_job: ""
