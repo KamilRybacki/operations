@@ -1,0 +1,86 @@
+k8s_prometheus_operator_create_default_rules: false
+k8s_prometheus_operator_default_rules:
+  - name: "alertmanager"
+    labels: {}
+    annotations: {}
+  - name: "etcd"
+    labels: {}
+    annotations: {}
+  - name: "general"
+    labels: {}
+    annotations: {}
+  - name: "k8s"
+    labels: {}
+    annotations: {}
+  - name: "kubeApiserverAvailability"
+    labels: {}
+    annotations: {}
+  - name: "kubeApiserverBurnrate"
+    labels: {}
+    annotations: {}
+  - name: "kubeApiserverHistogram"
+    labels: {}
+    annotations: {}
+  - name: "kubeApiserverSlos"
+    labels: {}
+    annotations: {}
+  - name: "kubeControllerManager"
+    labels: {}
+    annotations: {}
+  - name: "kubelet"
+    labels: {}
+    annotations: {}
+  - name: "kubeProxy"
+    labels: {}
+    annotations: {}
+  - name: "kubePrometheusGeneral"
+    labels: {}
+    annotations: {}
+  - name: "kubePrometheusNodeRecording"
+    labels: {}
+    annotations: {}
+  - name: "kubernetesApps"
+    labels: {}
+    annotations: {}
+  - name: "kubernetesResources"
+    labels: {}
+    annotations: {}
+  - name: "kubernetesStorage"
+    labels: {}
+    annotations: {}
+  - name: "kubernetesSystem" 
+    labels: {}
+    annotations: {}
+  - name: "kubeSchedulerAlerting"
+    labels: {}
+    annotations: {}
+  - name: "kubeSchedulerRecording"
+    labels: {}
+    annotations: {}
+  - name: "kubeStateMetrics"
+    labels: {}
+    annotations: {}
+  - name: "network"
+    labels: {}
+    annotations: {}
+  - name: "node"
+    labels: {}
+    annotations: {}
+  - name: "nodeExporterAlerting"
+    labels: {}
+    annotations: {}
+  - name: "nodeExporterRecording"
+    labels: {}
+    annotations: {}
+  - name: "prometheus"
+    labels: {}
+    annotations: {}
+  - name: "prometheusOperator"
+    labels: {}
+    annotations: {}
+  - name: "windows"
+    labels: {}
+    annotations: {}
+k8s_prometheus_operator_default_rules_namespaces_target: ".*"
+k8s_prometheus_operator_default_rules_runbook_url: "https://runbooks.prometheus-operator.dev/runbooks"
+

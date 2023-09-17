@@ -2,16 +2,6 @@ manifests_and_configs_path: "/tmp"
 kubeconfig_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/.kube/config"
 
 kind_nginx_ingress_cluster_name: "local-dev"
-kind_nginx_ingress_cluster_extra_nodes:
-  - role: worker
-    memory: "1Gi"
-    cpu: 1
-    extraMounts: []
-    extraLabels:
-       - name: node
-         value: worker
-    extraPortMappings:
-      - containerPort: 8080
-        hostPort: 8080
+kind_nginx_ingress_cluster_extra_nodes: []
 
 k8s_prometheus_target_cluster_name: "{{ kind_nginx_ingress_cluster_name }}"
