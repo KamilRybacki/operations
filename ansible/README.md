@@ -20,3 +20,18 @@ Example:
   cd ansible/<playbook>
   ansible-playbook -i ../environments/<environment> <playbook>.yml <playbook>.yml
 ```
+
+## Wizard
+
+A `wizard.py` Typer CLI application is provided to help with the creation of new playbooks. It can be run with the following command:
+
+```bash
+  wizard.py [command]
+```
+
+The following commands are available:
+
+* `playbook` - Creates a new playbook
+* `role` - Creates a new role
+
+Type `wizard.py [command] --help` for more information on each command.
