@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""
+This module contains the Operations Archwizard CLI.
+
+This tools is a combination of other subwizard CLIs to perform
+various types of operations within this repository.
+
+This tool is meant to be used as a CLI, not as a library.
+"""
+import typer
+
+import wizards.ansible  # type: ignore
+
+
+ARCHWIZARD = typer.Typer(
+    help='Main CLI for the Operations Archwizard',
+    pretty_exceptions_enable=True,
+    pretty_exceptions_short=True,
+    rich_markup_mode="rich",
+)
+ARCHWIZARD.add_typer(wizards.ansible.ANSIBLE, name='ansible')
+
+
+if __name__ == '__main__':
+    ARCHWIZARD()
