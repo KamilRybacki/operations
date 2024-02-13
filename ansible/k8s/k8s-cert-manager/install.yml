@@ -1,0 +1,8 @@
+---
+- name: "Deploy Let's Encrypt Cert-Manager"
+  hosts: "all"
+  connection: "local"
+  any_errors_fatal: true
+  tasks:
+    - ansible.builtin.include_role: { name: "install-lets-encrypt", tasks_from: "install" }
+    - ansible.builtin.include_role: { name: "create-issuer", tasks_from: "install" }

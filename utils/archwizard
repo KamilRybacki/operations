@@ -10,6 +10,7 @@ This tool is meant to be used as a CLI, not as a library.
 import typer
 
 import wizards.ansible  # type: ignore
+import wizards.flatvars  # type: ignore
 
 
 ARCHWIZARD = typer.Typer(
@@ -19,6 +20,7 @@ ARCHWIZARD = typer.Typer(
     rich_markup_mode="rich",
 )
 ARCHWIZARD.add_typer(wizards.ansible.ANSIBLE, name='ansible')
+ARCHWIZARD.add_typer(wizards.flatvars.FLATVARS, name='flatvars')
 
 
 if __name__ == '__main__':
