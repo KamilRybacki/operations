@@ -2,12 +2,13 @@
 """
 This module allows to quickly flatten Helm Values YAML so that
 the nested structure is removed and the variables are all at the top
+and enerates a Jinja2 template with the flattened variables.
 """
 
 import os
 import sys
 import typing
-import yaml
+import yaml  # type: ignore
 
 import typer
 
@@ -30,7 +31,8 @@ def flatten(
             Path to the Helm Values YAML file to flatten
         """,
     ),
-    output_file: str = typer.Argument(
+    output_file: typing.Optional[str] = typer.Option(
+        default='',
         help="""
             Path to the output file with flattened Helm Values
         """,
@@ -54,14 +56,23 @@ def flatten(
             if not line.strip().startswith('#')
             and line.strip()
         ]
-        flat_values = flatten_values(
+        flat_values = flatten_helm_values(
             yaml.safe_load('\n'.join(helm_values)),
             depth or DEFAULT_DEPTH,
             prefix or ''
         )
+        flattened_yaml = yaml.dump(flat_values, default_flow_style=False)
+        output_file_path = output_file \
+            or input_file.replace('.yaml', '_flat.yaml').replace('.yml', '_flat.yml')
+        with open(output_file_path, 'w', encoding='utf-8') as output:
+            output.write(flattened_yaml)
+    typer.secho(
+        f"Flattened Helm Values have been written to {output_file_path}",
+        fg=typer.colors.GREEN
+    )
 
 
-def flatten_values(values: dict, depth: int, prefix: str) -> dict:
+def flatten_helm_values(values: dict, depth: int, prefix: str) -> dict:
     """
     Flatten the nested dictionary values
     """
@@ -71,14 +82,15 @@ def flatten_values(values: dict, depth: int, prefix: str) -> dict:
         if isinstance(value, dict):
             if depth_counter < depth:
                 flat_values.update(
-                    flatten_values(
+                    flatten_helm_values(
                         value,
                         depth,
                         format_key(f"{prefix}_{key}")
                     )
                 )
+                depth_counter += 1
                 continue
-            if key.split('_')[-1] in BARRIER_KEYS:
+            if key.split('_')[-1] in BARRIER_KEYS or '/' in key:
                 flat_values[
                     format_key(f"{prefix}_{key}")
                 ] = value
@@ -91,7 +103,6 @@ def flatten_values(values: dict, depth: int, prefix: str) -> dict:
             flat_values[
                 format_key(f"{prefix}_{key}")
             ] = value
-    print(flat_values)
     return flat_values
 
 

@@ -26,7 +26,7 @@
       ansible.builtin.command: "kubectl cluster-info --kubeconfig={{ kubeconfig_path }}"
       register: kind_nginx_ingress_cluster_ready
       until: kind_nginx_ingress_cluster_ready.stdout.find("is running") != -1
-  when: kind_nginx_ingress_cluster_list.stdout.find(kind_nginx_ingress_cluster_name) == -1
+  when: kind_nginx_ingress_cluster_list.stdout.find(k8s_kind_nginx_ingress_cluster_name) == -1
 
 - name: "Download NGINX Ingress Controller Manifest"
   ansible.builtin.get_url:

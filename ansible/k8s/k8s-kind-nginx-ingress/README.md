@@ -25,8 +25,8 @@ For Ansible:
 As default, the cluster will be created with one node of the `control-plane` role.
 These variables are to be defined in the `environments/<environment>/group_vars/<group_name>.yml` file:
 
-* `kind_nginx_ingress_cluster_name` - cluster name suffix (default: `"local-dev"`)
-* (*optional*) `kind_nginx_ingress_cluster_extra_nodes` - definition of extra nodes (default: `[]`)
+* `k8s_kind_nginx_ingress_cluster_name` - cluster name suffix (default: `"local-dev"`)
+* (*optional*) `k8s_kind_nginx_ingress_cluster_extra_nodes` - definition of extra nodes (default: `[]`)
   Each node is defined as a dictionary with the following keys:
   * `role` - node role (available: `"worker"`, `"control-plane"`)
   * `memory` - human-readable memory size (e.g. `"1Gi"`)
