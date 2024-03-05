@@ -1,0 +1,5 @@
+---
+- name: "Remove Prometheus Community Helm Repository"
+  kubernetes.core.helm_repository:
+    name: "prometheus-community"
+    state: "absent"

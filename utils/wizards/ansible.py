@@ -11,7 +11,6 @@ import sys
 import typing
 
 import jinja2
-import rich.progress
 import typer
 
 ANSIBLE = typer.Typer(
@@ -19,16 +18,14 @@ ANSIBLE = typer.Typer(
     help='Ansible Wizard CLI',
 )
 
-# This goes up 4 directories from the current file,
+# This goes up 3 directories from the current file,
 # looks horrible but it works
 # TODO: Find a better way to do this
 
 ANSIBLE_DIR = os.path.dirname(
     os.path.dirname(
         os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
+            os.path.abspath(__file__)
         )
     )
 ) + '/ansible'
