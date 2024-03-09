@@ -1,0 +1,12 @@
+---
+- name: "Install Bitnami Helm Chart from OCI Registry"
+  kubernetes.core.helm:
+    name: "{{ k8s_monitoring_prometheus_name }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    chart_ref: "oci://{{ _k8s_monitoring_prometheus_chart_registry }}/{{ _k8s_monitoring_prometheus_chart_repository }}/{{ _k8s_monitoring_prometheus_chart_name }}"
+    release_namespace: "{{ k8s_monitoring_prometheus_namespace }}"
+    state: "{{ k8s_monitoring_prometheus_state }}"
+    wait: "{{ 'yes' if _k8s_monitoring_prometheus_chart_deployment_timeout > 0 else 'no' }}"
+    timeout: {{ _k8s_monitoring_prometheus_chart_deployment_timeout }}
+    values_files:
+      - "{{ _k8s_monitoring_prometheus_chart_values_file }}"

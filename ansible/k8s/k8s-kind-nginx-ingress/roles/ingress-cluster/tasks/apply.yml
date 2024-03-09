@@ -30,7 +30,7 @@
 
 - name: "Download NGINX Ingress Controller Manifest"
   ansible.builtin.get_url:
-    url: "{{ _ingress_cluster_nginx_ingress_manifest_url }}"
+    url: "{{ _kind_nginx_ingress_cluster_nginx_manifest_url }}"
     dest: "{{ manifests_and_configs_path }}/ingress-nginx-deploy.yaml"
     validate_certs: false
 

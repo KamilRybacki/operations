@@ -1,0 +1,13 @@
+k8s_monitoring_namespace: "monitoring"
+
+k8s_monitoring_prometheus_enabled: true
+k8s_monitoring_prometheus_name: "{{ _k8s_monitoring_prometheus_chart_name }}"
+k8s_monitoring_prometheus_namespace: "{{ k8s_monitoring_namespace }}"
+
+k8s_monitoring_prometheus_operator_pod_args_override: []
+k8s_monitoring_prometheus_operator_pod_extra_env_vars: []
+k8s_monitoring_prometheus_operator_pod_extra_configmaps: []
+k8s_monitoring_prometheus_operator_pod_extra_secret: ""
+
+k8s_monitoring_prometheus_operator_service_type: "ClusterIP"
+k8s_monitoring_prometheus_operator_service_port: 8080

@@ -5,3 +5,5 @@
   any_errors_fatal: true
   tasks:
     - ansible.builtin.include_role: { name: "prometheus", tasks_from: "apply" }
+      vars:
+        k8s_monitoring_prometheus_state: "present"

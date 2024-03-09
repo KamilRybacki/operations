@@ -1,7 +1,0 @@
----
-- name: "Remove monitoring from the cluster"
-  hosts: "all"
-  connection: "local"
-  any_errors_fatal: true
-  tasks:
-    - ansible.builtin.include_role: { name: "prometheus", tasks_from: "uninstall" }

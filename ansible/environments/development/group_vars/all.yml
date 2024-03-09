@@ -3,5 +3,3 @@ kubeconfig_path: "{{ lookup('ansible.builtin.env', 'HOME') }}/.kube/config"
 
 k8s_kind_nginx_ingress_cluster_name: "local-dev"
 k8s_kind_nginx_ingress_cluster_extra_nodes: []
-
-k8s_prometheus_target_cluster_name: "{{ k8s_kind_nginx_ingress_cluster_name }}"
