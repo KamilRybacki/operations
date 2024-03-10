@@ -1,22 +1,28 @@
 global:
-  nameOverride: "{{ k8s_monitoring_prometheus_name }}"
-  fullnameOverride: "{{ k8s_monitoring_prometheus_name }}"
+  nameOverride: "{{ k8s_monitoring_prometheus_operator_name }}"
+  fullnameOverride: "{{ k8s_monitoring_prometheus_operator_name }}"
   namespaceOverride: "{{ k8s_monitoring_namespace }}"
+  
   operator:
-    enabled: "{{ k8s_monitoring_prometheus_enabled }}"
+    enabled: "{{ k8s_monitoring_prometheus_operator_enabled }}"
+
+    podLabels: "{{ _k8s_monitoring_prometheus_operator_pod_labels }}"
+    podAnnotations: "{{ _k8s_monitoring_prometheus_operator_pod_annotations }}"
+
     image:
-      repository: "{{ _k8s_monitoring_prometheus_operator_image_repository }}"
-      tag: "{{ k8s_monitoring_prometheus_operator_image_tag }}"
-      pullPolicy: "{{ _k8s_monitoring_prometheus_operator_image_pull_policy }}"
+      tag: "{{ _k8s_monitoring_prometheus_operator_image_tag }}"
     command: "{{ _k8s_monitoring_prometheus_operator_pod_command_override }}"
     args: "{{ k8s_monitoring_prometheus_operator_pod_args_override }}"
+    
     extraEnvVars: "{{ k8s_monitoring_prometheus_operator_pod_extra_env_vars }}"
     extraEnvVarsCM: "{{ k8s_monitoring_prometheus_operator_pod_extra_configmaps }}"
     extraEnvVarsSecret: "{{ k8s_monitoring_prometheus_operator_pod_extra_secret }}"
     extraVolumes: "{{ _k8s_monitoring_prometheus_operator_pod_extra_volumes }}"
     extraVolumeMounts: "{{ _k8s_monitoring_prometheus_operator_pod_extra_volume_mounts }}"
+    
     sidecars: "{{ _k8s_monitoring_prometheus_operator_pod_sidecar_containers }}"
     initContainers: "{{ _k8s_monitoring_prometheus_operator_pod_init_containers }}"
+
     automountServiceAccountToken: "{{ _k8s_monitoring_prometheus_operator_service_account_automount }}"
     serviceAccount:
       create: "{{ _k8s_monitoring_prometheus_operator_service_account_create }}"
@@ -37,6 +43,64 @@ global:
     {{- endif }}
 
     service:
-      type: "{{ k8s_monitoring_prometheus_operator_service_type }}"
+      type: "{{ _k8s_monitoring_prometheus_operator_service_type }}"
       ports:
         http: "{{ k8s_monitoring_prometheus_operator_service_port }}"
+      annotations: "{{ k8s_monitoring_prometheus_operator_service_annotations }}"
+      labels: "{{ k8s_monitoring_prometheus_operator_service_labels }}"
+
+    networkPolicy:
+      enabled: "{{ _k8s_monitoring_prometheus_operator_network_policy_enabled }}"
+      allowExternal: "{{ _k8s_monitoring_prometheus_operator_network_policy_allow_external }}"
+      allowExternalEgress: "{{ _k8s_monitoring_prometheus_operator_network_policy_allow_external_ingress }}"
+      extraIngress: "{{ _k8s_monitoring_prometheus_operator_network_policy_extra_ingress_rules }}"
+      extraEgress: "{{ _k8s_monitoring_prometheus_operator_network_policy_extra_egress_rules }}"
+
+    serviceMonitor:
+      enabled: "{{ k8s_monitoring_prometheus_operator_service_monitor_enabled }}"
+      scrapeInterval: "{{ k8s_monitoring_prometheus_operator_service_monitor_scrape_interval }}"
+      scrapeTimeout: "{{ k8s_monitoring_prometheus_operator_service_monitor_scrape_timeout }}"
+      resources:
+        requests:
+          cpu: "{{ k8s_monitoring_prometheus_operator_service_monitor_resources_requests_cpu }}"
+          memory: "{{ k8s_monitoring_prometheus_operator_service_monitor_resources_requests_memory }}"
+        limits:
+          cpu: "{{ k8s_monitoring_prometheus_operator_service_monitor_resources_limits_cpu }}"
+          memory: "{{ k8s_monitoring_prometheus_operator_service_monitor_resources_limits_memory }}"
+
+{{- if k8s_monitoring_prometheus_operator_additional_config -}}
+
+{{ k8s_monitoring_prometheus_operator_additional_config | to_nice_yaml }}
+
+{{- endif }}
+
+prometheus:
+  enabled: "{{ k8s_monitoring_prometheus_enabled }}"
+
+  image:
+    tag: "{{ _k8s_monitoring_prometheus_image_tag }}"
+  
+  serviceAccount:
+    create: "{{ _k8s_monitoring_prometheus_service_account_create }}"
+    name: "{{ _k8s_monitoring_prometheus_service_account_name }}"
+    annotations: "{{ _k8s_monitoring_prometheus_service_account_annotations }}"
+    automountServiceAccountToken: "{{ _k8s_monitoring_prometheus_service_account_automount }}"
+
+  podSecurityContext: "{{ _k8s_monitoring_prometheus_pod_security_context | to_nice_yaml }}"
+  containerSecurityContext: "{{ _k8s_monitoring_prometheus_container_security_context | to_nice_yaml }}"
+
+  pdb: {{ _k8s_monitoring_prometheus_pod_disruption_budget | to_nice_yaml }}
+
+  service:
+    type: "{{ _k8s_monitoring_prometheus_service_type }}"
+    ports:
+      http: "{{ k8s_monitoring_prometheus_service_port }}"
+    annotations: "{{ k8s_monitoring_prometheus_service_annotations }}"
+    labels: "{{ k8s_monitoring_prometheus_service_labels }}"
+
+  networkPolicy:
+    enabled: "{{ _k8s_monitoring_prometheus_network_policy_enabled }}"
+    allowExternal: "{{ _k8s_monitoring_prometheus_network_policy_allow_external }}"
+    allowExternalEgress: "{{ _k8s_monitoring_prometheus_network_policy_allow_external_ingress }}"
+    extraIngress: "{{ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules }}"
+    extraEgress: "{{ _k8s_monitoring_prometheus_network_policy_extra_egress_rules }}"

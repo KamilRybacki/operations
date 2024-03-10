@@ -5,9 +5,31 @@ _k8s_monitoring_prometheus_chart_name: "kube-prometheus"
 _k8s_monitoring_prometheus_chart_deployment_timeout: 300
 _k8s_monitoring_prometheus_chart_values_file: "{{ manifests_and_configs_path }}/prometheus.yaml"
 
-_k8s_monitoring_prometheus_operator_image_repository: "bitnami/prometheus"
-_k8s_monitoring_prometheus_operator_image_pull_policy: "IfNotPresent"
-_k8s_monitoring_prometheus_operator_image_tag: "0.72.0-debian-12-r1"
+_k8s_monitoring_prometheus_image_tag: "0.72.0-debian-12-r1"
+
+_k8s_monitoring_prometheus_service_account_create: true
+_k8s_monitoring_prometheus_service_account_automount: false
+_k8s_monitoring_prometheus_service_account_name: "{{ k8s_monitoring_prometheus_operator_name }}-sa"
+_k8s_monitoring_prometheus_service_account_annotations: {}
+
+_k8s_monitoring_prometheus_pod_security_context: {}
+_k8s_monitoring_prometheus_container_security_context: {}
+_k8s_monitoring_prometheus_pod_disruption_budget: {}
+
+    # enabled: "{{ _k8s_monitoring_prometheus_network_policy_enabled }}"
+    # allowExternal: "{{ _k8s_monitoring_prometheus_network_policy_allow_external }}"
+    # allowExternalEgress: "{{ _k8s_monitoring_prometheus_network_policy_allow_external_ingress }}"
+    # extraIngress: "{{ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules }}"
+    # extraEgress: "{{ _k8s_monitoring_prometheus_network_policy_extra_egress_rules }}"
+
+_k8s_monitoring_prometheus_service_type: "ClusterIP"
+_k8s_monitoring_prometheus_network_policy_enabled: true
+_k8s_monitoring_prometheus_network_policy_allow_external: true
+_k8s_monitoring_prometheus_network_policy_allow_external_egress: true
+_k8s_monitoring_prometheus_network_policy_allow_extra_ingress_rules: []
+_k8s_monitoring_prometheus_network_policy_allow_extra_egress_rules: []
+
+_k8s_monitoring_prometheus_operator_image_tag: "2.50.1-debian-12-r1"
 
 _k8s_monitoring_prometheus_operator_pod_command: []
 _k8s_monitoring_prometheus_operator_pod_extra_volumes: []
@@ -17,10 +39,15 @@ _k8s_monitoring_prometheus_operator_pod_sidecar_containers: []
 
 _k8s_monitoring_prometheus_operator_service_account_create: true
 _k8s_monitoring_prometheus_operator_service_account_automount: true
-_k8s_monitoring_prometheus_operator_service_account_name: "{{ k8s_monitoring_prometheus_name }}-operator-sa"
+_k8s_monitoring_prometheus_operator_service_account_name: "{{ k8s_monitoring_prometheus_operator_name }}-operator-sa"
 _k8s_monitoring_prometheus_operator_service_account_annotations: {}
 
 _k8s_monitoring_prometheus_operator_pod_security_context: {}
 _k8s_monitoring_prometheus_operator_container_security_context: {}
 
 _k8s_monitoring_prometheus_operator_service_type: "ClusterIP"
+_k8s_monitoring_prometheus_operator_network_policy_enabled: true
+_k8s_monitoring_prometheus_operator_network_policy_allow_external: true
+_k8s_monitoring_prometheus_operator_network_policy_allow_external_egress: true
+_k8s_monitoring_prometheus_operator_network_policy_allow_extra_ingress_rules: []
+_k8s_monitoring_prometheus_operator_network_policy_allow_extra_egress_rules: []
