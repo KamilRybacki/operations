@@ -1,10 +1,8 @@
----
 k8s_monitoring_prometheus_name: "{{ _k8s_monitoring_prometheus_chart_name }}"
 k8s_monitoring_namespace: "monitoring"
 
 k8s_monitoring_prometheus_operator_namespace: "{{ k8s_monitoring_namespace }}"
 
----
 k8s_monitoring_prometheus_enabled: true
 k8s_monitoring_prometheus_replicas: 1
 k8s_monitoring_prometheus_shards: 1
@@ -46,7 +44,6 @@ k8s_monitoring_prometheus_service_monitor_extra_config: {}
 
 k8s_monitoring_prometheus_extra_config: {}
 
----
 k8s_monitoring_prometheus_operator_enabled: true
 
 k8s_monitoring_prometheus_operator_pod_labels: {}
@@ -75,7 +72,6 @@ k8s_monitoring_prometheus_operator_service_monitor_scrape_timeout: "15s"
 
 k8s_monitoring_prometheus_operator_extra_config: {}
 
----
 k8s_monitoring_alertmanager_enabled: true'
 
 k8s_monitoring_alertmanager_pod_extra_secrets: []

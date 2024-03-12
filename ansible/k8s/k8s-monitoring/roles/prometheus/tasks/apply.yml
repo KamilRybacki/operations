@@ -1,4 +1,12 @@
 ---
+- name: "Template Prometheus Chart values file"
+  ansible.builtin.template:
+    src: "Values.yml.j2"
+    dest: "{{ _k8s_monitoring_prometheus_chart_values_file }}"
+    mode: "0644"
+    force: "yes"
+  when: k8s_monitoring_prometheus_enabled
+
 - name: "Install Bitnami Helm Chart from OCI Registry"
   kubernetes.core.helm:
     name: "{{ k8s_monitoring_prometheus_operator_name }}"
@@ -7,6 +15,6 @@
     release_namespace: "{{ k8s_monitoring_prometheus_operator_namespace }}"
     state: "{{ k8s_monitoring_prometheus_state }}"
     wait: "{{ 'yes' if _k8s_monitoring_prometheus_chart_deployment_timeout > 0 else 'no' }}"
-    timeout: {{ _k8s_monitoring_prometheus_chart_deployment_timeout }}
+    timeout: "{{ _k8s_monitoring_prometheus_chart_deployment_timeout }}"
     values_files:
       - "{{ _k8s_monitoring_prometheus_chart_values_file }}"
