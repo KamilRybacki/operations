@@ -4,30 +4,84 @@ global:
   namespaceOverride: "{{ k8s_monitoring_namespace }}"
   
 operator:
-  enabled: "{{ k8s_monitoring_prometheus_operator_enabled }}"
+  enabled: {{ k8s_monitoring_prometheus_operator_enabled }}
 
-  podLabels: "{{ k8s_monitoring_prometheus_operator_pod_labels }}"
-  podAnnotations: "{{ k8s_monitoring_prometheus_operator_pod_annotations }}"
+  {% if k8s_monitoring_prometheus_operator_pod_labels | length > 0 %}
+
+  podLabels: 
+    {{ k8s_monitoring_prometheus_operator_pod_labels | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_operator_pod_annotations | length > 0 %}
+
+  podAnnotations:
+    {{ k8s_monitoring_prometheus_operator_pod_annotations | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
 
   image:
     tag: "{{ _k8s_monitoring_prometheus_operator_image_tag }}"
-  args: "{{ k8s_monitoring_prometheus_operator_pod_args_override }}"
-  
-  extraEnvVars: "{{ k8s_monitoring_prometheus_operator_pod_extra_env_vars }}"
-  extraEnvVarsCM: "{{ k8s_monitoring_prometheus_operator_pod_extra_configmaps }}"
-  extraEnvVarsSecret: "{{ k8s_monitoring_prometheus_operator_pod_extra_secret }}"
-  extraVolumes: "{{ _k8s_monitoring_prometheus_operator_pod_extra_volumes }}"
-  extraVolumeMounts: "{{ _k8s_monitoring_prometheus_operator_pod_extra_volume_mounts }}"
-  
-  sidecars: "{{ _k8s_monitoring_prometheus_operator_pod_sidecar_containers }}"
-  initContainers: "{{ _k8s_monitoring_prometheus_operator_pod_init_containers }}"
 
-  automountServiceAccountToken: "{{ _k8s_monitoring_prometheus_operator_service_account_automount }}"
+  {% if k8s_monitoring_prometheus_operator_pod_args_override | length > 0 %}
+
+  args:
+    {{ k8s_monitoring_prometheus_operator_pod_args_override | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_operator_pod_extra_env_vars | length > 0 %}
+
+  extraEnvVars:
+    {{ k8s_monitoring_prometheus_operator_pod_extra_env_vars | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  extraEnvVarsCM: "{{ k8s_monitoring_prometheus_operator_pod_extra_configmap }}"
+
+  extraEnvVarsSecret: "{{ k8s_monitoring_prometheus_operator_pod_extra_secret }}"
+
+  {% if _k8s_monitoring_prometheus_operator_pod_extra_volumes | length > 0 %}
+
+  extraVolumes:
+    {{ _k8s_monitoring_prometheus_operator_pod_extra_volumes | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_prometheus_operator_pod_extra_volume_mounts | length > 0 %}
+
+  extraVolumeMounts:
+    {{ _k8s_monitoring_prometheus_operator_pod_extra_volume_mounts | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_prometheus_operator_pod_sidecar_containers | length > 0 %}
+
+  sidecars:
+    {{ _k8s_monitoring_prometheus_operator_pod_sidecar_containers | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_prometheus_operator_pod_init_containers | length > 0 %}
+
+  initContainers:
+    {{ _k8s_monitoring_prometheus_operator_pod_init_containers | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  automountServiceAccountToken: {{ _k8s_monitoring_prometheus_operator_service_account_automount }}
   serviceAccount:
-    create: "{{ _k8s_monitoring_prometheus_operator_service_account_create }}"
+    create: {{ _k8s_monitoring_prometheus_operator_service_account_create }}
     name: "{{ _k8s_monitoring_prometheus_operator_service_account_name }}"
-    annotations: "{{ _k8s_monitoring_prometheus_operator_service_account_annotations }}"
-    automountServiceAccountToken: "{{ _k8s_monitoring_prometheus_operator_service_account_automount }}"
+
+    {% if _k8s_monitoring_prometheus_operator_service_account_annotations | length > 0 %}
+
+    annotations:
+      {{ _k8s_monitoring_prometheus_operator_service_account_annotations | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    automountServiceAccountToken: {{ _k8s_monitoring_prometheus_operator_service_account_automount }}
 
   {% if _k8s_monitoring_prometheus_operator_pod_security_context | length > 0 %}
   
@@ -45,15 +99,39 @@ operator:
     type: "{{ _k8s_monitoring_prometheus_operator_service_type }}"
     ports:
       http: "{{ k8s_monitoring_prometheus_operator_service_port }}"
-    annotations: "{{ k8s_monitoring_prometheus_operator_service_annotations }}"
-    labels: "{{ k8s_monitoring_prometheus_operator_service_labels }}"
+
+    {% if k8s_monitoring_prometheus_operator_service_annotations | length > 0 %}
+
+    annotations:
+      {{ k8s_monitoring_prometheus_operator_service_annotations | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+    {% endif %}
+
+    {% if k8s_monitoring_prometheus_operator_service_labels | length > 0 %}
+
+    labels:
+      {{ k8s_monitoring_prometheus_operator_service_labels | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+    {% endif %}
 
   networkPolicy:
-    enabled: "{{ _k8s_monitoring_prometheus_operator_network_policy_enabled }}"
-    allowExternal: "{{ _k8s_monitoring_prometheus_operator_network_policy_allow_external }}"
-    allowExternalEgress: "{{ _k8s_monitoring_prometheus_operator_network_policy_allow_external_egress }}"
-    extraIngress: "{{ _k8s_monitoring_prometheus_operator_network_policy_extra_ingress_rules }}"
-    extraEgress: "{{ _k8s_monitoring_prometheus_operator_network_policy_extra_egress_rules }}"
+    enabled: {{ _k8s_monitoring_prometheus_operator_network_policy_enabled }}
+    allowExternal: {{ _k8s_monitoring_prometheus_operator_network_policy_allow_external }}
+    allowExternalEgress: {{ _k8s_monitoring_prometheus_operator_network_policy_allow_external_egress }}
+
+    {% if _k8s_monitoring_prometheus_operator_network_policy_extra_ingress_rules | length > 0 %}
+
+    extraIngress:
+      {{ _k8s_monitoring_prometheus_operator_network_policy_extra_ingress_rules | to_nice_yaml(indent=2) }}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_prometheus_operator_network_policy_extra_egress_rules | length > 0 %}
+
+    extraEgress:
+      {{ _k8s_monitoring_prometheus_operator_network_policy_extra_egress_rules | to_nice_yaml(indent=2)}}
+
+    {% endif %}
 
     {% if _k8s_monitoring_prometheus_operator_network_policy_extra_config | length > 0 %}
 
@@ -62,7 +140,7 @@ operator:
     {% endif %}
 
   serviceMonitor:
-    enabled: "{{ k8s_monitoring_prometheus_operator_service_monitor_enabled }}"
+    enabled: {{ k8s_monitoring_prometheus_operator_service_monitor_enabled }}
     scrapeInterval: "{{ k8s_monitoring_prometheus_operator_service_monitor_scrape_interval }}"
     scrapeTimeout: "{{ k8s_monitoring_prometheus_operator_service_monitor_scrape_timeout }}"
   
@@ -81,7 +159,7 @@ operator:
 {% endif %}
 
 prometheus:
-  enabled: "{{ k8s_monitoring_prometheus_enabled }}"
+  enabled: True
   replicaCount: "{{ k8s_monitoring_prometheus_replicas }}"
   shards: "{{ k8s_monitoring_prometheus_shards }}"
 
@@ -93,48 +171,145 @@ prometheus:
   retentionSize: "{{ k8s_monitoring_prometheus_retention_size }}"
   
   persistence:
-    enabled: "{{ k8s_monitoring_prometheus_persistence_enabled }}"
+    enabled: {{ k8s_monitoring_prometheus_persistence_enabled }}
     size: "{{ k8s_monitoring_prometheus_persistence_storage_size }}"
     storageClass: "{{ k8s_monitoring_prometheus_persistence_storage_class }}"
-    accessModes: "{{ k8s_monitoring_prometheus_persistence_storage_access_modes }}"
-    annotations: "{{ k8s_monitoring_prometheus_persistence_storage_annotations }}"
-  volumes: {{ k8s_monitoring_prometheus_persistence_extra_volumes | to_nice_yaml(indent=2)}}
-  volumeMounts: {{ k8s_monitoring_prometheus_persistence_extra_volume_mounts | to_nice_yaml(indent=2)}}
 
-  remoteRead: "{{ k8s_monitoring_prometheus_remote_read }}"
-  remoteWrite: "{{ k8s_monitoring_prometheus_remote_write }}"
+    {% if k8s_monitoring_prometheus_persistence_storage_access_modes | length > 0 %}
+
+    accessModes:
+      {{ k8s_monitoring_prometheus_persistence_storage_access_modes | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if k8s_monitoring_prometheus_persistence_storage_annotations | length > 0 %}
+
+    annotations:
+      {{ k8s_monitoring_prometheus_persistence_storage_annotations | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+    {% endif %}
+
+  {% if k8s_monitoring_prometheus_persistence_extra_volumes | length > 0 %}
+
+  volumes:
+    {{ k8s_monitoring_prometheus_persistence_extra_volumes | to_nice_yaml(indent=2)}}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_persistence_extra_volume_mounts | length > 0 %}
+
+  volumeMounts:
+    {{ k8s_monitoring_prometheus_persistence_extra_volume_mounts | to_nice_yaml(indent=2)}}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_remote_read | length > 0 %}
+
+  remoteRead:
+    {{ k8s_monitoring_prometheus_remote_read | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_remote_write | length > 0 %}
+
+  remoteWrite:
+    {{ k8s_monitoring_prometheus_remote_write | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
 
   image:
     tag: "{{ _k8s_monitoring_prometheus_image_tag }}"
-  additionalArgs: "{{ k8s_monitoring_prometheus_pod_extra_args }}"
 
-  secrets: "{{ k8s_monitoring_prometheus_pod_extra_secrets }}"
-  configMaps: "{{ k8s_monitoring_prometheus_pod_extra_configmaps }}"
-  
+  {% if k8s_monitoring_prometheus_pod_extra_args | length > 0 %}
+
+  additionalArgs:
+    {{ k8s_monitoring_prometheus_pod_extra_args | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_pod_extra_secrets | length > 0 %}
+
+  secrets:
+    {{ k8s_monitoring_prometheus_pod_extra_secrets | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_pod_extra_configmaps | length > 0 %}
+
+  configMaps:
+    {{ k8s_monitoring_prometheus_pod_extra_configmaps | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
   serviceAccount:
-    create: "{{ _k8s_monitoring_prometheus_service_account_create }}"
+    create: {{ _k8s_monitoring_prometheus_service_account_create }}
     name: "{{ _k8s_monitoring_prometheus_service_account_name }}"
-    annotations: "{{ _k8s_monitoring_prometheus_service_account_annotations }}"
-    automountServiceAccountToken: "{{ _k8s_monitoring_prometheus_service_account_automount }}"
 
-  podSecurityContext: "{{ _k8s_monitoring_prometheus_pod_security_context | to_nice_yaml(indent=2) }}"
-  containerSecurityContext: "{{ _k8s_monitoring_prometheus_container_security_context | to_nice_yaml(indent=2) }}"
+    {% if _k8s_monitoring_prometheus_service_account_annotations | length > 0 %}
 
-  pdb: {{ _k8s_monitoring_prometheus_pod_disruption_budget | to_nice_yaml(indent=2) }}
+    annotations:
+      {{ _k8s_monitoring_prometheus_service_account_annotations | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    automountServiceAccountToken: {{ _k8s_monitoring_prometheus_service_account_automount }}
+
+  {% if _k8s_monitoring_prometheus_pod_security_context | length > 0 %}
+
+  podSecurityContext:
+    {{ _k8s_monitoring_prometheus_pod_security_context | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_prometheus_container_security_context | length > 0 %}
+
+  containerSecurityContext:
+    {{ _k8s_monitoring_prometheus_container_security_context | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_prometheus_pod_disruption_budget | length > 0 %}
+
+  pdb:
+    {{ _k8s_monitoring_prometheus_pod_disruption_budget | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
 
   service:
     type: "{{ _k8s_monitoring_prometheus_service_type }}"
     ports:
       http: "{{ k8s_monitoring_prometheus_service_port }}"
-    annotations: "{{ k8s_monitoring_prometheus_service_annotations }}"
-    labels: "{{ k8s_monitoring_prometheus_service_labels }}"
+
+  {% if k8s_monitoring_prometheus_service_annotations | length > 0 %}
+
+    annotations:
+      {{ k8s_monitoring_prometheus_service_annotations | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if k8s_monitoring_prometheus_service_labels | length > 0 %}
+
+    labels:
+      {{ k8s_monitoring_prometheus_service_labels | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
 
   networkPolicy:
-    enabled: "{{ _k8s_monitoring_prometheus_network_policy_enabled }}"
-    allowExternal: "{{ _k8s_monitoring_prometheus_network_policy_allow_external }}"
-    allowExternalEgress: "{{ _k8s_monitoring_prometheus_network_policy_allow_external_egress }}"
-    extraIngress: "{{ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules }}"
-    extraEgress: "{{ _k8s_monitoring_prometheus_network_policy_extra_egress_rules }}"
+    enabled: {{ _k8s_monitoring_prometheus_network_policy_enabled }}
+    allowExternal: {{ _k8s_monitoring_prometheus_network_policy_allow_external }}
+    allowExternalEgress: {{ _k8s_monitoring_prometheus_network_policy_allow_external_egress }}
+
+    {% if _k8s_monitoring_prometheus_network_policy_extra_ingress_rules | length > 0 %}
+
+    extraIngress: {{ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules }}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_prometheus_network_policy_extra_egress_rules | length > 0 %}
+
+    extraEgress: {{ _k8s_monitoring_prometheus_network_policy_extra_egress_rules }}
+
+    {% endif %}
 
     {% if _k8s_monitoring_prometheus_network_policy_extra_config | length > 0 %}
 
@@ -143,7 +318,7 @@ prometheus:
     {% endif %}
 
   serviceMonitor:
-    enabled: "{{ k8s_monitoring_prometheus_service_monitor_enabled }}"
+    enabled: {{ k8s_monitoring_prometheus_service_monitor_enabled }}
     interval: "{{ k8s_monitoring_prometheus_service_monitor_scrape_interval }}"
 
     {% if k8s_monitoring_prometheus_service_monitor_extra_config | length > 0 %}
@@ -153,22 +328,7 @@ prometheus:
     {% endif %}
 
   ingress:
-    enabled: "{{ _k8s_monitoring_prometheus_ingress_enabled }}"
-    ingressClassName: "{{ _k8s_monitoring_prometheus_ingress_class }}"
-
-    annotations: "{{ _k8s_monitoring_prometheus_ingress_annotations }}"
-    labels: "{{ _k8s_monitoring_prometheus_ingress_labels }}"
-    secrets: "{{ _k8s_monitoring_prometheus_ingress_secrets }}"
-
-    hostname: "{{ _k8s_monitoring_prometheus_ingress_hostame }}"
-    path: "{{ _k8s_monitoring_prometheus_ingress_path }}"
-    tls: "{{ _k8s_monitoring_prometheus_ingress_tls }}"
-    selfSigned: "{{ _k8s_monitoring_prometheus_ingress_tls_self_signed }}"
-
-    extraHosts: "{{ _k8s_monitoring_prometheus_ingress_extra_hosts }}"
-    extraTls: "{{ _k8s_monitoring_prometheus_ingress_extra_tls }}"
-    extraPaths: "{{ _k8s_monitoring_prometheus_ingress_extra_paths }}"
-    extraRules: "{{ _k8s_monitoring_prometheus_ingress_extra_rules }}"
+    enabled: {{ _k8s_monitoring_prometheus_default_ingress_enabled }}
 
   resources:
     limits:
@@ -185,41 +345,99 @@ prometheus:
   {% endif %}
 
   thanos:
-    create: "{{ _k8s_monitoring_prometheus_thanos_enabled }}"
+    create: {{ _k8s_monitoring_prometheus_thanos_enabled }}
 
 alertmanager:
-  enabled: "{{ k8s_monitoring_alertmanager_enabled }}"
+  enabled: {{ k8s_monitoring_alertmanager_enabled }}
 
   image:
     tag: "{{ _k8s_monitoring_alertmanager_image_tag }}"
 
-  secrets: "{{ _k8s_monitoring_alertmanager_pod_extra_secrets }}"
-  configMaps: "{{ _k8s_monitoring_alertmanager_pod_extra_configmaps }}"
+  {% if k8s_monitoring_alertmanager_pod_extra_secrets | length > 0 %}
+
+  secrets:
+    {{ k8s_monitoring_alertmanager_pod_extra_secrets | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if k8s_monitoring_alertmanager_pod_extra_configmaps | length > 0 %}
+
+  configMaps:
+    {{ k8s_monitoring_alertmanager_pod_extra_configmaps | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
 
   serviceAccount:
-    create: "{{ _k8s_monitoring_alertmanager_service_account_create }}"
+    create: {{ _k8s_monitoring_alertmanager_service_account_create }}
     name: "{{ _k8s_monitoring_alertmanager_service_account_name }}"
-    annotations: "{{ _k8s_monitoring_alertmanager_service_account_annotations }}"
-    automountServiceAccountToken: "{{ _k8s_monitoring_alertmanager_service_account_automount }}"
 
-  podSecurityContext: "{{ _k8s_monitoring_alertmanager_pod_security_context | to_nice_yaml(indent=2) }}"
-  containerSecurityContext: "{{ _k8s_monitoring_alertmanager_container_security_context | to_nice_yaml(indent=2) }}"
+    {% if _k8s_monitoring_alertmanager_service_account_annotations | length > 0 %}
 
-  pdb: {{ _k8s_monitoring_alertmanager_pod_disruption_budget | to_nice_yaml(indent=2) }}
+    annotations:
+      {{ _k8s_monitoring_alertmanager_service_account_annotations | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    automountServiceAccountToken: {{ _k8s_monitoring_alertmanager_service_account_automount }}
+
+  {% if _k8s_monitoring_alertmanager_pod_security_context | length > 0 %}
+
+  podSecurityContext:
+    {{ _k8s_monitoring_alertmanager_pod_security_context | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_alertmanager_container_security_context | length > 0 %}
+
+  containerSecurityContext:
+    {{ _k8s_monitoring_alertmanager_container_security_context | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_alertmanager_pod_disruption_budget | length > 0 %}
+
+  pdb:
+    {{ _k8s_monitoring_alertmanager_pod_disruption_budget | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
 
   service:
     type: "{{ _k8s_monitoring_alertmanager_service_type }}"
     ports:
       http: "{{ k8s_monitoring_alertmanager_service_port }}"
-    annotations: "{{ k8s_monitoring_alertmanager_service_annotations }}"
-    labels: "{{ k8s_monitoring_alertmanager_service_labels }}"
+
+    {% if k8s_monitoring_alertmanager_service_annotations | length > 0 %}
+
+    annotations:
+      {{ k8s_monitoring_alertmanager_service_annotations | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+    {% endif %}
+
+    {% if k8s_monitoring_alertmanager_service_labels | length > 0 %}
+
+    labels:
+      {{ k8s_monitoring_alertmanager_service_labels | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
 
   networkPolicy:
-    enabled: "{{ _k8s_monitoring_alertmanager_network_policy_enabled }}"
-    allowExternal: "{{ _k8s_monitoring_alertmanager_network_policy_allow_external }}"
-    allowExternalEgress: "{{ _k8s_monitoring_alertmanager_network_policy_allow_external_egress }}"
-    extraIngress: "{{ _k8s_monitoring_alertmanager_network_policy_extra_ingress_rules }}"
-    extraEgress: "{{ _k8s_monitoring_alertmanager_network_policy_extra_egress_rules }}"
+    enabled: {{ _k8s_monitoring_alertmanager_network_policy_enabled }}
+    allowExternal: {{ _k8s_monitoring_alertmanager_network_policy_allow_external }}
+    allowExternalEgress: {{ _k8s_monitoring_alertmanager_network_policy_allow_external_egress }}
+
+    {% if _k8s_monitoring_alertmanager_network_policy_extra_ingress_rules | length > 0 %}
+
+    extraIngress:
+      {{ _k8s_monitoring_alertmanager_network_policy_extra_ingress_rules | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_network_policy_extra_egress_rules | length > 0 %}
+
+    extraEgress:
+      {{ _k8s_monitoring_alertmanager_network_policy_extra_egress_rules | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
 
     {% if _k8s_monitoring_alertmanager_network_policy_extra_config | length > 0 %}
 
@@ -228,7 +446,7 @@ alertmanager:
     {% endif %}
 
   serviceMonitor:
-    enabled: "{{ k8s_monitoring_alertmanager_service_monitor_enabled }}"
+    enabled: {{ k8s_monitoring_alertmanager_service_monitor_enabled }}
     interval: "{{ k8s_monitoring_alertmanager_service_monitor_scrape_interval }}"
     scrapeTimeout: "{{ k8s_monitoring_alertmanager_service_monitor_scrape_timeout }}"
 
@@ -239,22 +457,69 @@ alertmanager:
     {% endif %}
 
   ingress:
-    enabled: "{{ _k8s_monitoring_alertmanager_ingress_enabled }}"
+    enabled: {{ _k8s_monitoring_alertmanager_ingress_enabled }}
     ingressClassName: "{{ _k8s_monitoring_alertmanager_ingress_class }}"
 
-    annotations: "{{ _k8s_monitoring_alertmanager_ingress_annotations }}"
-    labels: "{{ _k8s_monitoring_alertmanager_ingress_labels }}"
-    secrets: "{{ _k8s_monitoring_alertmanager_ingress_secrets }}"
+    {% if _k8s_monitoring_alertmanager_ingress_annotations | length > 0 %}
 
-    hostname: "{{ _k8s_monitoring_alertmanager_ingress_hostame }}"
+    annotations:
+      {{ _k8s_monitoring_alertmanager_ingress_annotations | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_ingress_labels | length > 0 %}
+
+    labels:
+      {{ _k8s_monitoring_alertmanager_ingress_labels | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_ingress_secrets | length > 0 %}
+
+    secrets:
+      {{ _k8s_monitoring_alertmanager_ingress_secrets | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    hostname: "{{ _k8s_monitoring_alertmanager_ingress_hostname }}"
     path: "{{ _k8s_monitoring_alertmanager_ingress_path }}"
-    tls: "{{ _k8s_monitoring_alertmanager_ingress_tls }}"
-    selfSigned: "{{ _k8s_monitoring_alertmanager_ingress_tls_self_signed }}"
 
-    extraHosts: "{{ _k8s_monitoring_alertmanager_ingress_extra_hosts }}"
-    extraTls: "{{ _k8s_monitoring_alertmanager_ingress_extra_tls }}"
-    extraPaths: "{{ _k8s_monitoring_alertmanager_ingress_extra_paths }}"
-    extraRules: "{{ _k8s_monitoring_alertmanager_ingress_extra_rules }}"
+    {% if _k8s_monitoring_alertmanager_ingress_tls | length > 0 %}
+
+    tls:
+      {{ _k8s_monitoring_alertmanager_ingress_tls | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    selfSigned: {{ _k8s_monitoring_alertmanager_ingress_tls_self_signed }}
+
+    {% if _k8s_monitoring_alertmanager_ingress_extra_hosts | length > 0 %}
+
+    extraHosts:
+      {{ _k8s_monitoring_alertmanager_ingress_extra_hosts | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_ingress_extra_tls | length > 0 %}
+
+    extraTls:
+      {{ _k8s_monitoring_alertmanager_ingress_extra_tls | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_ingress_extra_paths | length > 0 %}
+
+    extraPaths:
+      {{ _k8s_monitoring_alertmanager_ingress_extra_paths | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if _k8s_monitoring_alertmanager_ingress_extra_rules | length > 0 %}
+
+    extraRules:
+      {{ _k8s_monitoring_alertmanager_ingress_extra_rules | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
 
   resources:
     limits:
@@ -264,32 +529,77 @@ alertmanager:
       cpu: "{{ k8s_monitoring_alertmanager_pod_requests_cpu }}"
       memory: "{{ k8s_monitoring_alertmanager_pod_requests_memory }}"
 
-  externalConfig: "{{ _k8s_monitoring_alertmanager_enable_external_config }}"
+  externalConfig: {{ _k8s_monitoring_alertmanager_enable_external_config }}
   config:
     global:
       resolve_timeout: "{{ k8s_monitoring_alertmanager_resolve_timeout }}"
     route:
-      group_by: "{{ k8s_monitoring_alertmanager_route_group_by }}"
+      group_by: {{ k8s_monitoring_alertmanager_route_group_by }}
       group_wait: "{{ k8s_monitoring_alertmanager_route_group_wait }}"
       group_interval: "{{ k8s_monitoring_alertmanager_route_group_interval }}"
       repeat_interval: "{{ k8s_monitoring_alertmanager_route_repeat_interval }}"
       receiver: "{{ k8s_monitoring_alertmanager_route_receiver }}"
-      routes: "{{ k8s_monitoring_alertmanager_route_routes | to_nice_yaml(indent=8) }}"
-    receivers: "{{ k8s_monitoring_alertmanager_receivers | to_nice_yaml(indent=6) }}"
-  templateFiles: "{{ k8s_monitoring_alertmanager_template_files | to_nice_yaml(indent=4) }}"
+
+      {% if k8s_monitoring_alertmanager_routes | length > 0 %}
+
+      routes:
+        {{ k8s_monitoring_alertmanager_routes | to_nice_yaml(indent=2) | trim | indent(8) }}
+
+      {% endif %}
+
+    {% if k8s_monitoring_alertmanager_receivers | length > 0 %}
+
+    receivers:
+      {{ k8s_monitoring_alertmanager_receivers | to_nice_yaml(indent=2) | trim | indent(6) }}
+
+    {% endif %}
+
+  {% if k8s_monitoring_alertmanager_template_files | length > 0 %}
+
+  templateFiles:
+    {{ k8s_monitoring_alertmanager_template_files | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
 
   retention: "{{ k8s_monitoring_alertmanager_retention }}"
   persistence:
-    enabled: "{{ k8s_monitoring_alertmanager_persistence_enabled }}"
+    enabled: {{ k8s_monitoring_alertmanager_persistence_enabled }}
     size: "{{ k8s_monitoring_alertmanager_persistence_storage_size }}"
     storageClass: "{{ k8s_monitoring_alertmanager_persistence_storage_class }}"
-    accessModes: "{{ k8s_monitoring_alertmanager_persistence_access_mode }}"
-    annotations: "{{ k8s_monitoring_alertmanager_persistence_annotations }}"
 
-  volumes: {{ _k8s_monitoring_alertmanager_persistence_extra_volumes | to_nice_yaml(indent=2)}}
-  volumeMounts: {{ _k8s_monitoring_alertmanager_persistence_extra_volume_mounts | to_nice_yaml(indent=2)}}
+    {% if k8s_monitoring_alertmanager_persistence_storage_access_modes | length > 0 %}
 
-  configSelector: "{{ _k8s_monitoring_alertmanager_configs_selector | to_nice_yaml(indent=4) }}"
+    accessModes:
+      {{ k8s_monitoring_alertmanager_persistence_storage_access_modes | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+    {% endif %}
+
+    {% if k8s_monitoring_alertmanager_persistence_storage_annotations | length > 0 %}
+
+    annotations: {{ k8s_monitoring_alertmanager_persistence_storage_annotations }}
+
+    {% endif %}
+
+  {% if k8s_monitoring_alertmanager_persistence_extra_volumes | length > 0 %}
+
+  volumes:
+    {{ k8s_monitoring_alertmanager_persistence_extra_volumes | to_nice_yaml(indent=2) | trim | indent(4)}}
+
+  {% endif %}
+
+  {% if k8s_monitoring_alertmanager_persistence_extra_volume_mounts | length > 0 %}
+
+  volumeMounts:
+    {{ k8s_monitoring_alertmanager_persistence_extra_volume_mounts | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
+
+  {% if _k8s_monitoring_alertmanager_config_selector | length > 0 %}
+
+  configSelector:
+    {{ _k8s_monitoring_alertmanager_config_selector | to_nice_yaml(indent=2) | trim | indent(4) }}
+
+  {% endif %}
 
   {% if k8s_monitoring_alertmanager_extra_config | length > 0 %}
   

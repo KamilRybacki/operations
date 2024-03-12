@@ -1,9 +1,6 @@
 k8s_monitoring_prometheus_name: "{{ _k8s_monitoring_prometheus_chart_name }}"
-k8s_monitoring_namespace: "monitoring"
+k8s_monitoring_prometheus_namespace: "{{ k8s_monitoring_namespace }}"
 
-k8s_monitoring_prometheus_operator_namespace: "{{ k8s_monitoring_namespace }}"
-
-k8s_monitoring_prometheus_enabled: true
 k8s_monitoring_prometheus_replicas: 1
 k8s_monitoring_prometheus_shards: 1
 
@@ -42,6 +39,11 @@ k8s_monitoring_prometheus_service_monitor_enabled: true
 k8s_monitoring_prometheus_service_monitor_scrape_interval: "15s"
 k8s_monitoring_prometheus_service_monitor_extra_config: {}
 
+k8s_monitoring_prometheus_ingress_name: "{{ k8s_monitoring_prometheus_name }}-ingress"
+k8s_monitoring_prometheus_ingress_enabled: true
+k8s_monitoring_prometheus_ingress_annotations: {}
+k8s_monitoring_prometheus_ingress_path: "/"
+
 k8s_monitoring_prometheus_extra_config: {}
 
 k8s_monitoring_prometheus_operator_enabled: true
@@ -51,7 +53,7 @@ k8s_monitoring_prometheus_operator_pod_annotations: {}
 
 k8s_monitoring_prometheus_operator_pod_args_override: []
 k8s_monitoring_prometheus_operator_pod_extra_env_vars: []
-k8s_monitoring_prometheus_operator_pod_extra_configmaps: []
+k8s_monitoring_prometheus_operator_pod_extra_configmap: ""
 k8s_monitoring_prometheus_operator_pod_extra_secret: ""
 
 k8s_monitoring_prometheus_operator_pod_limits_cpu: "100m"
@@ -72,7 +74,7 @@ k8s_monitoring_prometheus_operator_service_monitor_scrape_timeout: "15s"
 
 k8s_monitoring_prometheus_operator_extra_config: {}
 
-k8s_monitoring_alertmanager_enabled: true'
+k8s_monitoring_alertmanager_enabled: true
 
 k8s_monitoring_alertmanager_pod_extra_secrets: []
 k8s_monitoring_alertmanager_pod_extra_configmaps: []
@@ -82,7 +84,7 @@ k8s_monitoring_alertmanager_pod_limits_memory: "256Mi"
 k8s_monitoring_alertmanager_pod_requests_cpu: "100m"
 k8s_monitoring_alertmanager_pod_requests_memory: "256Mi"
 
-k8s_monitoring_alertmanager_retention: "30d"
+k8s_monitoring_alertmanager_retention: "120h"
 k8s_monitoring_alertmanager_retention_size: "10GB"
 
 k8s_monitoring_alertmanager_persistence_enabled: false
@@ -115,4 +117,4 @@ k8s_monitoring_alertmanager_receivers: []
 
 k8s_monitoring_alertmanager_template_files: {}
 
-k8s_monitoring_alertmanager_extra_configs: {}
+k8s_monitoring_alertmanager_extra_config: {}

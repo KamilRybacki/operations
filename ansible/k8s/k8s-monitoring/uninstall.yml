@@ -1,5 +1,5 @@
 ---
-- name: "Remove monitoring from the cluster"
+- name: "Uninstall monitoring stack"
   hosts: "all"
   connection: "local"
   any_errors_fatal: true

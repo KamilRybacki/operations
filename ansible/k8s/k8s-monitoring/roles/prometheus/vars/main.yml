@@ -1,10 +1,9 @@
 _k8s_monitoring_prometheus_chart_registry: "registry-1.docker.io"
 _k8s_monitoring_prometheus_chart_repository: "bitnamicharts"
 _k8s_monitoring_prometheus_chart_name: "kube-prometheus"
-_k8s_monitoring_prometheus_chart_deployment_timeout: 300
 _k8s_monitoring_prometheus_chart_values_file: "{{ manifests_and_configs_path }}/prometheus.yaml"
 
-_k8s_monitoring_prometheus_image_tag: "0.72.0-debian-12-r1"
+_k8s_monitoring_prometheus_image_tag: "2.50.1-debian-12-r1"
 
 _k8s_monitoring_prometheus_service_account_create: true
 _k8s_monitoring_prometheus_service_account_automount: false
@@ -26,24 +25,11 @@ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules: []
 _k8s_monitoring_prometheus_network_policy_extra_egress_rules: []
 _k8s_monitoring_prometheus_network_policy_extra_config: {}
 
-_k8s_monitoring_prometheus_ingress_enabled: false
-_k8s_monitoring_prometheus_ingress_class: ""
-_k8s_monitoring_prometheus_ingress_annotations: {}
-_k8s_monitoring_prometheus_ingress_labels: {}
-_k8s_monitoring_prometheus_ingress_secrets: []
-_k8s_monitoring_prometheus_ingress_hostname: ""
-_k8s_monitoring_prometheus_ingress_path: "/"
-_k8s_monitoring_prometheus_ingress_tls: []
-_k8s_monitoring_prometheus_ingress_tls_self_signed: false
-
-_k8s_monitoring_prometheus_ingress_extra_hosts: []
-_k8s_monitoring_prometheus_ingress_extra_tls: []
-_k8s_monitoring_prometheus_ingress_extra_paths: []
-_k8s_monitoring_prometheus_ingress_extra_rules: []
+_k8s_monitoring_prometheus_default_ingress_enabled: false
 
 _k8s_monitoring_prometheus_thanos_enabled: false
 
-_k8s_monitoring_prometheus_operator_image_tag: "2.50.1-debian-12-r1"
+_k8s_monitoring_prometheus_operator_image_tag: "0.72.0-debian-12-r1"
 
 _k8s_monitoring_prometheus_operator_pod_command: []
 _k8s_monitoring_prometheus_operator_pod_extra_volumes: []
@@ -87,8 +73,8 @@ _k8s_monitoring_alertmanager_service_type: "ClusterIP"
 _k8s_monitoring_alertmanager_network_policy_enabled: true
 _k8s_monitoring_alertmanager_network_policy_allow_external: true
 _k8s_monitoring_alertmanager_network_policy_allow_external_egress: true
-_k8s_monitoring_alertmanager_network_policy_allow_extra_ingress_rules: []
-_k8s_monitoring_alertmanager_network_policy_allow_extra_egress_rules: []
+_k8s_monitoring_alertmanager_network_policy_extra_ingress_rules: []
+_k8s_monitoring_alertmanager_network_policy_extra_egress_rules: []
 _k8s_monitoring_alertmanager_network_policy_extra_config: {}
 
 _k8s_monitoring_alertmanager_ingress_enabled: false
