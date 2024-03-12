@@ -9,18 +9,15 @@ _k8s_monitoring_prometheus_image_tag: "0.72.0-debian-12-r1"
 
 _k8s_monitoring_prometheus_service_account_create: true
 _k8s_monitoring_prometheus_service_account_automount: false
-_k8s_monitoring_prometheus_service_account_name: "{{ k8s_monitoring_prometheus_operator_name }}-sa"
+_k8s_monitoring_prometheus_service_account_name: "{{ k8s_monitoring_prometheus_name }}-sa"
 _k8s_monitoring_prometheus_service_account_annotations: {}
 
 _k8s_monitoring_prometheus_pod_security_context: {}
 _k8s_monitoring_prometheus_container_security_context: {}
-_k8s_monitoring_prometheus_pod_disruption_budget: {}
-
-    # enabled: "{{ _k8s_monitoring_prometheus_network_policy_enabled }}"
-    # allowExternal: "{{ _k8s_monitoring_prometheus_network_policy_allow_external }}"
-    # allowExternalEgress: "{{ _k8s_monitoring_prometheus_network_policy_allow_external_ingress }}"
-    # extraIngress: "{{ _k8s_monitoring_prometheus_network_policy_extra_ingress_rules }}"
-    # extraEgress: "{{ _k8s_monitoring_prometheus_network_policy_extra_egress_rules }}"
+_k8s_monitoring_prometheus_pod_disruption_budget:
+  create: false
+  minAvailable: 1
+  maxUnavailable: ""
 
 _k8s_monitoring_prometheus_service_type: "ClusterIP"
 _k8s_monitoring_prometheus_network_policy_enabled: true
@@ -28,7 +25,26 @@ _k8s_monitoring_prometheus_network_policy_allow_external: true
 _k8s_monitoring_prometheus_network_policy_allow_external_egress: true
 _k8s_monitoring_prometheus_network_policy_allow_extra_ingress_rules: []
 _k8s_monitoring_prometheus_network_policy_allow_extra_egress_rules: []
+_k8s_monitoring_prometheus_network_policy_extra_config: {}
 
+_k8s_monitoring_prometheus_ingress_enabled: false
+_k8s_monitoring_prometheus_ingress_class: ""
+_k8s_monitoring_prometheus_ingress_annotations: {}
+_k8s_monitoring_prometheus_ingress_labels: {}
+_k8s_monitoring_prometheus_ingress_secrets: []
+_k8s_monitoring_prometheus_ingress_hostname: ""
+_k8s_monitoring_prometheus_ingress_path: "/"
+_k8s_monitoring_prometheus_ingress_tls: []
+_k8s_monitoring_prometheus_ingress_tls_self_signed: false
+
+_k8s_monitoring_prometheus_ingress_extra_hosts: []
+_k8s_monitoring_prometheus_ingress_extra_tls: []
+_k8s_monitoring_prometheus_ingress_extra_paths: []
+_k8s_monitoring_prometheus_ingress_extra_rules: []
+
+_k8s_monitoring_prometheus_thanos_enabled: false
+
+---
 _k8s_monitoring_prometheus_operator_image_tag: "2.50.1-debian-12-r1"
 
 _k8s_monitoring_prometheus_operator_pod_command: []
@@ -39,7 +55,7 @@ _k8s_monitoring_prometheus_operator_pod_sidecar_containers: []
 
 _k8s_monitoring_prometheus_operator_service_account_create: true
 _k8s_monitoring_prometheus_operator_service_account_automount: true
-_k8s_monitoring_prometheus_operator_service_account_name: "{{ k8s_monitoring_prometheus_operator_name }}-operator-sa"
+_k8s_monitoring_prometheus_operator_service_account_name: "{{ k8s_monitoring_prometheus_name }}-operator-sa"
 _k8s_monitoring_prometheus_operator_service_account_annotations: {}
 
 _k8s_monitoring_prometheus_operator_pod_security_context: {}
@@ -51,3 +67,48 @@ _k8s_monitoring_prometheus_operator_network_policy_allow_external: true
 _k8s_monitoring_prometheus_operator_network_policy_allow_external_egress: true
 _k8s_monitoring_prometheus_operator_network_policy_allow_extra_ingress_rules: []
 _k8s_monitoring_prometheus_operator_network_policy_allow_extra_egress_rules: []
+_k8s_monitoring_prometheus_operator_network_policy_extra_config: {}
+
+---
+_k8s_monitoring_alertmanager_image_tag: "0.27.0-debian-12-r1"
+
+_k8s_monitoring_alertmanager_service_account_create: true
+_k8s_monitoring_alertmanager_service_account_automount: false
+_k8s_monitoring_alertmanager_service_account_name: "{{ k8s_monitoring_prometheus_name }}-alertmanager-sa"
+_k8s_monitoring_alertmanager_service_account_annotations: {}
+
+_k8s_monitoring_alertmanager_pod_security_context: {}
+_k8s_monitoring_alertmanager_container_security_context: {}
+
+_k8s_monitoring_alertmanager_pod_disruption_budget:
+  create: false
+  minAvailable: 1
+  maxUnavailable: ""
+
+_k8s_monitoring_alertmanager_service_type: "ClusterIP"
+
+_k8s_monitoring_alertmanager_network_policy_enabled: true
+_k8s_monitoring_alertmanager_network_policy_allow_external: true
+_k8s_monitoring_alertmanager_network_policy_allow_external_egress: true
+_k8s_monitoring_alertmanager_network_policy_allow_extra_ingress_rules: []
+_k8s_monitoring_alertmanager_network_policy_allow_extra_egress_rules: []
+_k8s_monitoring_alertmanager_network_policy_extra_config: {}
+
+_k8s_monitoring_alertmanager_ingress_enabled: false
+_k8s_monitoring_alertmanager_ingress_class: ""
+_k8s_monitoring_alertmanager_ingress_annotations: {}
+_k8s_monitoring_alertmanager_ingress_labels: {}
+_k8s_monitoring_alertmanager_ingress_secrets: []
+_k8s_monitoring_alertmanager_ingress_hostname: ""
+_k8s_monitoring_alertmanager_ingress_path: "/"
+_k8s_monitoring_alertmanager_ingress_tls: []
+_k8s_monitoring_alertmanager_ingress_tls_self_signed: false
+
+_k8s_monitoring_alertmanager_ingress_extra_hosts: []
+_k8s_monitoring_alertmanager_ingress_extra_tls: []
+_k8s_monitoring_alertmanager_ingress_extra_paths: []
+_k8s_monitoring_alertmanager_ingress_extra_rules: []
+
+_k8s_monitoring_alertmanager_enable_external_config: false
+
+_k8s_monitoring_alertmanager_config_selector: {}
