@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MANIFEST_URL="https://kind.sigs.k8s.io/examples/ingress/usage.yaml"
+MANIFEST_URL=/home/kamil/Projekty/Moje/operations/ansible/k8s/k8s-kind-nginx-ingress/tests/test_services.yaml
 
 echo "Creating the ingress"
 kubectl \
@@ -18,10 +18,10 @@ kubectl \
 
 echo "Testing the ingress"
 
+CLUSTER_IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
 FOO_CURL_COMMAND="curl -X GET -s -k -o /dev/null -w \"%{http_code}\" 0.0.0.0/foo/hostname"
 BAR_CURL_COMMAND="curl -X GET -s -k -o /dev/null -w \"%{http_code}\" 0.0.0.0/bar/hostname"
-
-kind get clusters
 
 echo "Testing the foo app"
 FOO_STATUS_CODE=$(eval $FOO_CURL_COMMAND)
