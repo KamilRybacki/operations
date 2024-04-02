@@ -74,7 +74,7 @@ k8s_monitoring_prometheus_operator_service_monitor_scrape_timeout: "15s"
 
 k8s_monitoring_prometheus_operator_extra_config: {}
 
-k8s_monitoring_alertmanager_enabled: true
+k8s_monitoring_alertmanager_enabled: false
 
 k8s_monitoring_alertmanager_pod_extra_secrets: []
 k8s_monitoring_alertmanager_pod_extra_configmaps: []

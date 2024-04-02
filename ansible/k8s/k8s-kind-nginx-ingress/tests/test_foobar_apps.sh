@@ -16,25 +16,20 @@ kubectl \
       --all \
       --timeout=300s
 
-echo "Testing the ingress"
-
-CLUSTER_IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-FOO_CURL_COMMAND="curl -X GET -s -k -o /dev/null -w \"%{http_code}\" 0.0.0.0/foo/hostname"
-BAR_CURL_COMMAND="curl -X GET -s -k -o /dev/null -w \"%{http_code}\" 0.0.0.0/bar/hostname"
-
 echo "Testing the foo app"
-FOO_STATUS_CODE=$(eval $FOO_CURL_COMMAND)
-echo "Foo app status code: $FOO_STATUS_CODE"
-if [ "$FOO_STATUS_CODE" -ne 200 ]; then
+FOO_HOSTNAME=$(curl -X GET "localhost/foo/hostname")
+echo "Foo app response:"
+echo "$FOO_HOSTNAME"
+if [ "$FOO_HOSTNAME" != "foo-app" ]; then
   echo "Foo app failed"
   STATUS=1
 fi
 
 echo "Testing the bar app"
-BAR_STATUS_CODE=$(eval $BAR_CURL_COMMAND)
-echo "Bar app status code: $BAR_STATUS_CODE"
-if [ "$BAR_STATUS_CODE" -ne 200 ]; then
+BAR_HOSTNAME=$(curl -X GET "localhost/bar/hostname")
+echo "Bar app response:\n"
+echo "$BAR_HOSTNAME"
+if [ "$BAR_HOSTNAME" != "bar-app" ]; then
   echo "Bar app failed"
   STATUS=1
 fi

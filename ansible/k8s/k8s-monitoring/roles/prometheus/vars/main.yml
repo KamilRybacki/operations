@@ -95,3 +95,15 @@ _k8s_monitoring_alertmanager_ingress_extra_rules: []
 _k8s_monitoring_alertmanager_enable_external_config: false
 
 _k8s_monitoring_alertmanager_config_selector: {}
+
+_k8s_monitoring_prometheus_crds:
+  - alertmanagerconfigs.monitoring.coreos.com
+  - alertmanagers.monitoring.coreos.com
+  - podmonitors.monitoring.coreos.com
+  - probes.monitoring.coreos.com
+  - prometheusagents.monitoring.coreos.com
+  - prometheuses.monitoring.coreos.com
+  - prometheusrules.monitoring.coreos.com
+  - scrapeconfigs.monitoring.coreos.com
+  - servicemonitors.monitoring.coreos.com
+  - thanosrulers.monitoring.coreos.com
