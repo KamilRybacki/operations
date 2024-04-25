@@ -2,4 +2,4 @@ home:
   hosts:
     localhost:
       ansible_connection: local
-      ansible_python_interpreter: "{{ lookup('ansible.builtin.env', 'HOME') }}/.pyenv/shims/python3"
+      ansible_python_interpreter: "{{ lookup('ansible.builtin.env', 'HOME') }}/.pyenv/shims/python"
