@@ -1,4 +1,0 @@
-k8s_kind_nginx_ingress_dns_interface: "eth0"
-k8s_kind_nginx_ingress_dns_nameservers:
-  - "svc.{{ k8s_kind_nginx_ingress_cluster_domain }}"
-  - "{{ k8s_kind_nginx_ingress_cluster_domain }}"

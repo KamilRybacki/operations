@@ -20,4 +20,6 @@ i.e. **host machine** configuration that communicates with K8s API.
 They are to be defined in the `inventory.yml` file.
 
 * `k8s_manifests_and_configs_path` - the path where auxiliary files e.g. Jinja2 templates will be rendered to **on host machine** that will be applying manifests to a K8s cluster (default: `"/tmp"`)
+* `k8s_netplan_interface` - the network interface for which the `netplan` configurations will be rendered (default: default IPv4 interface read from `ansible_default_ipv4` fact)
+* `k8s_netplan_renderer` - rendered to specify in dynamically created `netplan` configurations (default: `"NetworkManager"`)
 * `k8s_kubeconfig_path` - path to Kubeconfig **on the host machine** to be used i.e. where the cluster entry/context will be added (default: `"{{ lookup('ansible.builtin.env', 'HOME') }}/.kube/config"`)

@@ -6,3 +6,4 @@
   tasks:
     - ansible.builtin.include_role: { name: "ensure-kind", tasks_from: "install" }
     - ansible.builtin.include_role: { name: "setup-cluster", tasks_from: "create" }
+    - ansible.builtin.include_role: { name: "configure-dns", tasks_from: "register" }
