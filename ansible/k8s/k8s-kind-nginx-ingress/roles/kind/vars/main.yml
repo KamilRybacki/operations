@@ -1,4 +1,0 @@
-_kind_version: "v0.20.0"
-
-_kind_x86_64_url: "https://kind.sigs.k8s.io/dl/{{ _kind_version }}/kind-linux-amd64"
-_kind_arm64_url: "https://kind.sigs.k8s.io/dl/{{ _kind_version }}/kind-linux-arm64"

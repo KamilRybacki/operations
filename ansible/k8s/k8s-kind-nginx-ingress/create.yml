@@ -1,8 +1,0 @@
----
-- name: "Create Kind cluster with NGINX Ingress"
-  hosts: "all"
-  connection: "local"
-  any_errors_fatal: true
-  tasks:
-    - ansible.builtin.include_role: { name: "kind", tasks_from: "install" }
-    - ansible.builtin.include_role: { name: "ingress-cluster", tasks_from: "apply" }

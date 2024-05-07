@@ -14,11 +14,11 @@
       failed_when: false
     - name: "Choose AMD URL for Kind"
       set_fact:
-        kind_url: "{{ _kind_x86_64_url }}" 
+        kind_url: "{{ _k8s_kind_with_ingress_ensure_kind_x86_64_url }}" 
       when: host_arch.stdout == "x86_64"
     - name: "Choose ARM URL for Kind"
       set_fact:
-        kind_url: "{{ _kind_arm64_url }}" 
+        kind_url: "{{ _k8s_kind_with_ingress_ensure_kind_arm64_url }}" 
       when: host_arch.stdout == "aarch64"
     - name: "Download Kind from URL"
       ansible.builtin.get_url:

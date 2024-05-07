@@ -1,6 +1,6 @@
 ---
 kind: Cluster
-name: "{{ k8s_kind_nginx_ingress_cluster_name }}"
+name: "{{ k8s_kind_with_ingress_setup_cluster_name }}"
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: "control-plane"
@@ -18,9 +18,9 @@ nodes:
       hostPort: 443
       protocol: TCP
 
-{% if k8s_kind_nginx_ingress_cluster_extra_nodes | length > 0 %}
+{% if k8s_kind_with_ingress_setup_cluster_extra_nodes | length > 0 %}
 
-{% for node in k8s_kind_nginx_ingress_cluster_extra_nodes %}
+{% for node in k8s_kind_with_ingress_setup_cluster_extra_nodes %}
 
 {% set nodes = 1 %}
 {% if node.amount is defined %}

@@ -1,2 +1,0 @@
-k8s_kind_nginx_ingress_cluster_name: "local-dev"
-k8s_kind_nginx_ingress_cluster_extra_nodes: []

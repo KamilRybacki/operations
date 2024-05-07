@@ -1,7 +1,7 @@
 _k8s_monitoring_prometheus_chart_registry: "registry-1.docker.io"
 _k8s_monitoring_prometheus_chart_repository: "bitnamicharts"
 _k8s_monitoring_prometheus_chart_name: "kube-prometheus"
-_k8s_monitoring_prometheus_chart_values_file: "{{ manifests_and_configs_path }}/prometheus.yaml"
+_k8s_monitoring_prometheus_chart_values_file: "{{ k8s_manifests_and_configs_path }}/prometheus.yaml"
 
 _k8s_monitoring_prometheus_image_tag: "2.50.1-debian-12-r1"
 

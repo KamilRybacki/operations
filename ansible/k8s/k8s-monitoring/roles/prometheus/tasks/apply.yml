@@ -20,13 +20,13 @@
     kind: "Namespace"
     name: "{{ k8s_monitoring_namespace }}"
     state: "present"
-    kubeconfig: "{{ kubeconfig_path }}"
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
   when: k8s_monitoring_prometheus_state == "present"
 
 - name: "Install Bitnami Helm Chart from OCI Registry"
   kubernetes.core.helm:
     name: "{{ k8s_monitoring_prometheus_name }}"
-    kubeconfig: "{{ kubeconfig_path }}"
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
     chart_ref: "oci://{{ _k8s_monitoring_prometheus_chart_registry }}/{{ _k8s_monitoring_prometheus_chart_repository }}/{{ _k8s_monitoring_prometheus_chart_name }}"
     release_namespace: "{{ k8s_monitoring_prometheus_namespace }}"
     state: "{{ k8s_monitoring_prometheus_state }}"
@@ -40,6 +40,6 @@
     kind: "CustomResourceDefinition"
     name: "{{ item }}"
     state: "absent"
-    kubeconfig: "{{ kubeconfig_path }}"
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
   with_items: "{{ _k8s_monitoring_prometheus_crds }}"
   when: k8s_monitoring_prometheus_state == "absent"

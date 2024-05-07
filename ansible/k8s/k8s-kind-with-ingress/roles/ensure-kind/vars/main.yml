@@ -1,0 +1,4 @@
+_k8s_kind_with_ingress_ensure_kind_version: "v0.20.0"
+
+_k8s_kind_with_ingress_ensure_kind_x86_64_url: "https://kind.sigs.k8s.io/dl/{{ _k8s_kind_with_ingress_ensure_kind_version }}/kind-linux-amd64"
+_k8s_kind_with_ingress_ensure_kind_arm64_url: "https://kind.sigs.k8s.io/dl/{{ _k8s_kind_with_ingress_ensure_kind_version }}/kind-linux-arm64"

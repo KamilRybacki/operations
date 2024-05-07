@@ -1,4 +1,2 @@
 k8s_kind_with_ingress_setup_cluster_name: "local-dev"
 k8s_kind_with_ingress_setup_cluster_extra_nodes: []
-
-k8s_monitoring_namespace: "monitoring"
