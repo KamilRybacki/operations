@@ -20,6 +20,11 @@ For Ansible:
 
 * `kubernetes.core` collection
 
+System utilities:
+
+* Internet connections **must** be managed by [NetworkManager] and `nmcli` utility
+must be available on the host system
+
 ## Roles
 
 * `kind` - Installs Kind if not present

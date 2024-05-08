@@ -2,6 +2,8 @@
 - name: "Remove Kind cluster"
   hosts: "all"
   connection: "local"
+  become: true
   any_errors_fatal: true
   tasks:
     - ansible.builtin.include_role: { name: "setup-cluster", tasks_from: "remove" }
+    - ansible.builtin.include_role: { name: "configure-dns", tasks_from: "revert" }

@@ -1,0 +1,27 @@
+- name: Get the name of last netplan config generated for Kind cluster DNS
+  ansible.builtin.shell:
+    cmd: "ls -r1 /etc/netplan | awk '/{{ k8s_kind_with_ingress_setup_cluster_name }}/' | head -1"
+  register: latest_generated_netplan_config_for_kind
+
+- name: Revert the generated config if present
+  block:
+    - name: "Store currently established connection name for {{ ansible_default_ipv4.interface }} interface"
+      ansible.builtin.shell:
+        cmd: "nmcli dev show {{ ansible_default_ipv4.interface }} | grep 'GENERAL.CONNECTION' | awk -F':' '{print $2}' | sed 's/^[[:space:]]*//g'"
+      register: current_connection_name
+
+    - name: Remove the found config
+      ansible.builtin.file:
+        path: "/etc/netplan/{{ latest_generated_netplan_config_for_kind.stdout }}"
+        state: absent
+
+    - name: Revert netplan config
+      ansible.builtin.shell:
+        cmd: "netplan apply"
+
+    - name: Toggle the previously established connection for {{ ansible_default_ipv4.interface }} interface
+      ansible.builtin.shell:
+        cmd: "nmcli connection up '{{ current_connection_name.stdout }}'"
+      when: current_connection_name.stdout != ''
+  when: latest_generated_netplan_config_for_kind.stdout != ''
+

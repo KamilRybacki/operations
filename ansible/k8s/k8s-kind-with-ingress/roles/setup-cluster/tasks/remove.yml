@@ -5,8 +5,5 @@
   changed_when: false
   failed_when: false
 
-- debug:
-    msg: "Kind Cluster List: {{ kind_with_ingress_setup_cluster_current_clusters_list.stdout }}"
-
 - name: "Create Kind Cluster"
   ansible.builtin.command: "kind delete clusters --kubeconfig={{ k8s_kubeconfig_path }} {{ k8s_kind_with_ingress_setup_cluster_name }}"
