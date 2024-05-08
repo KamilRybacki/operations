@@ -62,7 +62,7 @@
   set_fact:
     dns_config:
       search: "{{ dns_config.search }}"
-      addresses: "{{ current_dns_servers.stdout.split('\n') + dns_config.addresses }}"
+      addresses: "{{ dns_config.addresses + current_dns_servers.stdout.split('\n') }}"
 
 - name: "Get the number of next netplan config to be stored on host"
   ansible.builtin.shell:
