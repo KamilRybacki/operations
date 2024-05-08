@@ -1,9 +1,7 @@
-
-- name: "Check if Kind Cluster is present"
-  ansible.builtin.command: "kind get clusters"
-  register: kind_with_ingress_setup_cluster_current_clusters_list
-  changed_when: false
-  failed_when: false
-
-- name: "Create Kind Cluster"
+- name: "Remove Kind Cluster"
   ansible.builtin.command: "kind delete clusters --kubeconfig={{ k8s_kubeconfig_path }} {{ k8s_kind_with_ingress_setup_cluster_name }}"
+
+- name: "Remove the {{ k8s_kind_with_ingress_setup_cluster_name }}-dns-routing-container"
+  community.docker.docker_container:
+    name: "{{ k8s_kind_with_ingress_setup_cluster_name }}-dns-routing-container"
+    state: absent

@@ -1,0 +1,91 @@
+---
+- name: "Wait for default ServiceAccount to be created"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: default
+        namespace: default
+    wait: yes
+    wait_timeout: 60
+
+- name: "Spawn DNSutils Pod to get DNS servers"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: dnsutils
+        namespace: default
+      spec:
+        containers:
+        - name: dnsutils
+          image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+          command:
+          - sleep
+          - "3600"
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+    wait: yes
+    wait_timeout: 60
+
+- name: "Get DNS server entry from DNSutils pod with kubectl exec"
+  kubernetes.core.k8s_exec:
+    kubeconfig: "{{ k8s_kubeconfig_path }}"
+    namespace: default
+    pod: dnsutils
+    command: "cat /etc/resolv.conf"
+  register: dnsutils_resolv_conf
+
+- name: "Package the DNS server and search domain into a dictionary"
+  set_fact:
+    dns_config:
+      search: "{{ dnsutils_resolv_conf.stdout_lines[0] | regex_replace('search ', '') | split(' ') }}"
+      addresses: "{{ dnsutils_resolv_conf.stdout_lines[1] | regex_replace('nameserver ', '') | split(' ')}}"
+
+- name: "Spawn a {{ k8s_kind_with_ingress_setup_cluster_name }} routing container"
+  community.docker.docker_container:
+    name: "{{ k8s_kind_with_ingress_setup_cluster_name }}-dns-routing-container"
+    image: curlimages/curl:7.71.0
+    state: started
+    interactive: yes
+    tty: yes
+    detach: yes
+    networks:
+      - name: kind
+    capabilities:
+      - "NET_ADMIN"
+    dns_servers: "{{ dns_config.addresses | list }}"
+    dns_search_domains: "{{ dns_config.search | list }}"
+    command: "sleep infinity"
+
+- name: "Get the {{ k8s_kind_with_ingress_setup_cluster_name }} control plane container info"
+  community.docker.docker_container_info:
+    name: "{{ k8s_kind_with_ingress_setup_cluster_name }}-control-plane"
+  register: kind_control_plane_container_info
+
+- name: "Get the IP address of the {{ k8s_kind_with_ingress_setup_cluster_name }} control plane container"
+  set_fact:
+    kind_control_plane_ip: "{{ kind_control_plane_container_info.container.NetworkSettings.Networks.kind.IPAddress }}"
+
+- name: "Get pods CIDR of Kind cluster control plane"
+  ansible.builtin.shell:
+    cmd: "kubectl get node {{ k8s_kind_with_ingress_setup_cluster_name }}-control-plane --output jsonpath='{@.spec.podCIDR}'"
+  register: kind_cluster_control_plane_pod_cidr
+
+- name: "Get service CIDR of Kind cluster control plane"
+  ansible.builtin.shell:
+    cmd: "kubectl cluster-info dump | grep -m 1 service-cluster-ip-range | awk -F'=' '{print $2}' | awk -F'\"' '{print $1}'"
+  register: kind_cluster_control_plane_service_cidr
+
+- name: "Add routes to route traffic to Kind cluster control plane"
+  ansible.builtin.shell:
+    cmd: "docker exec --tty --user 0 {{ k8s_kind_with_ingress_setup_cluster_name }}-dns-routing-container ip route add {{ item }} via {{ kind_control_plane_ip }}"
+  loop:
+    - "{{ kind_cluster_control_plane_pod_cidr.stdout }}"
+    - "{{ kind_cluster_control_plane_service_cidr.stdout }}"
